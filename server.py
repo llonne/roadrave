@@ -1,0 +1,181 @@
+"""Movie Ratings."""
+
+from jinja2 import StrictUndefined
+
+from flask import Flask, render_template, request, flash, redirect, session
+from flask_debugtoolbar import DebugToolbarExtension
+
+from model import connect_to_db, db, User, Vehicle, Post
+
+
+app = Flask(__name__)
+
+# Required to use Flask sessions and the debug toolbar
+app.secret_key = "ABC"
+
+# Normally, if you use an undefined variable in Jinja2, it fails silently.
+# This is horrible. Fix this so that, instead, it raises an error.
+app.jinja_env.undefined = StrictUndefined
+
+
+@app.route('/')
+def index():
+    """Homepage."""
+
+    return render_template("homepage.html")
+
+
+@app.route('/register', methods=['GET'])
+def register_form():
+    """Show form for user signup."""
+
+    return render_template("register_form.html")
+
+
+@app.route('/register', methods=['POST'])
+def register_process():
+    """Process registration."""
+
+    # Get form variables
+    email = request.form["email"]
+    password = request.form["password"]
+    username = request.form["username"])
+
+    new_user = User(email=email, password=password, username=username)
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    flash("User %s added." % email)
+    return redirect("/users/%s" % new_user.user_id)
+
+
+@app.route('/login', methods=['GET'])
+def login_form():
+    """Show login form."""
+
+    return render_template("login_form.html")
+
+
+@app.route('/login', methods=['POST'])
+def login_process():
+    """Process login."""
+
+    # Get form variables
+    email = request.form["email"]
+    password = request.form["password"]
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        flash("No such user")
+        return redirect("/login")
+
+    if user.password != password:
+        flash("Incorrect password")
+        return redirect("/login")
+
+    session["user_id"] = user.user_id
+
+    flash("Logged in")
+    return redirect("/users/%s" % user.user_id)
+
+
+@app.route('/logout')
+def logout():
+    """Log out."""
+
+    del session["user_id"]
+    flash("Logged Out.")
+    return redirect("/")
+
+
+@app.route("/users/<int:user_id>")
+def user_detail(user_id):
+    """Show info about user."""
+
+    user = User.query.get(user_id)
+    return render_template("user.html", user=user)
+
+
+@app.route("/posts/<int:post_id>", methods=['GET'])
+def post_detail(post_id):
+    """Show info about a post.
+
+    If a user is logged in, let them add/edit a post.
+    """
+
+    post = Post.query.get(post_id)
+
+    user_id = session.get("user_id")
+
+    if user_id:
+        user_post = Post.query.filter_by(
+            post_id=post_id).first()
+    else:
+        user_post = None
+        # alert not logged in
+        # return redirect login page
+
+    # if (not user_post) and user_id:
+    #     print "No Posts yet" and redirect to add form
+
+    return render_template(
+        "post.html",
+        date=user_post.date,
+        ptype=user_post.ptype,
+        subject=user_post.subject,
+        plate=plate,
+        location=location
+        )
+
+
+@app.route("/posts/<int:post_id>", methods=['POST'])
+def post_detail_process(post_id):
+    """Add/edit a post."""
+
+    # Get form variables
+    date = request.form["date"]
+    ptype = request.form["ptype"]
+    subject = request.form["subject"]
+    plate = request.form["plate"]
+    location = request.form["location"]
+
+    user_id = session.get("user_id")
+
+    if not user_id:
+        raise Exception("No user logged in.")
+
+    post = Post.query.filter_by(post_id=post_id).first()
+
+    if post:
+        post.date = date
+        post.ptype = ptype
+        post.subject = subject
+        post.plate = plate
+        post.location = location
+        flash("Post updated.")
+
+    else:
+        post = Post(date=date, ptype=ptype, subject=subject, plate=plate, location=location, user_id=user_id)
+        flash("Post added.")
+        db.session.add(post)
+
+    db.session.commit()
+
+    return redirect("/posts/%s" % post_id)
+
+
+if __name__ == "__main__":
+    # We have to set debug=True here, since it has to be True at the point
+    # that we invoke the DebugToolbarExtension
+
+    # Do not debug for demo
+    app.debug = True
+
+    connect_to_db(app)
+
+    # Use the DebugToolbar
+    DebugToolbarExtension(app)
+
+    app.run()

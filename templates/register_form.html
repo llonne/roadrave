@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="well spaced" style="width:40%;">
+<h1>Register</h1>
+
+<form action="register" method="POST">
+
+    <div class="form-group">
+        <label>
+            Email
+            <input type="email" name="email" class="form-control">
+        </label>
+    </div>
+
+    <div class="form-group">
+        <label>
+            Password
+            <input type="password" name="password" class="form-control">
+        </label>
+    </div>
+    <!-- TODO: Auto-generate default username here? -->
+    <div class="form-group">
+        <label>
+            Username
+            <input type="text" name="username" class="form-control">
+        </label>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Register" class="btn btn-danger">
+    </div>
+
+</form>
+</div>
+{% endblock %}
