@@ -24,9 +24,9 @@ def load_users():
         # We need to add to the session or it won't ever be stored
         db.session.add(user)
 
-        # provide some sense of progress
-        if i % 100 == 0:
-            print i
+        # # provide some sense of progress
+        # if i % 100 == 0:
+        #     print i
 
     # Once we're done, we should commit our work
     db.session.commit()
@@ -57,9 +57,9 @@ def load_vehicles():
         # We need to add to the session or it won't ever be stored
         db.session.add(vehicle)
 
-        # provide some sense of progress
-        if i % 100 == 0:
-            print i
+        # # provide some sense of progress
+        # if i % 100 == 0:
+        #     print i
 
     # Once we're done, we should commit our work
     db.session.commit()
@@ -91,9 +91,9 @@ def load_posts():
         # We need to add to the session or it won't ever be stored
         db.session.add(post)
 
-        # provide some sense of progress
-        if i % 1000 == 0:
-            print i
+        # # provide some sense of progress
+        # if i % 1000 == 0:
+        #     print i
 
             # An optimization: if we commit after every add, the database
             # will do a lot of work committing each record. However, if we

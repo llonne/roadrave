@@ -20,7 +20,7 @@
           <p>Post Plate: {{ user_post.vehicle_plate }}</p>
           <p>Post Location: {{ user_post.location }}</p>
         {% endif %}
-          <form action="/post/{{ post.post_id }}" method="POST">
+          <form action="/post/{{ user_post.post_id }}" method="POST">
               <div class="form-group">
                   <label>Event Date:
                     <input type="date" name="event_date"

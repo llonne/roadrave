@@ -1,4 +1,4 @@
-"""Movie roadrave."""
+"""Roadrave site."""
 
 from jinja2 import StrictUndefined
 
@@ -78,24 +78,26 @@ def login_process():
     session["user_id"] = user.user_id
 
     flash("Logged in")
-    return redirect("/users/%s" % user.user_id)
+    return redirect("/profile/%s" % user.user_id)
 
 
 @app.route('/logout')
 def logout():
     """Log out."""
 
-    del session["user_id"]
+    if (session["user_id"]):
+        del session["user_id"]
     flash("Logged Out.")
-    return redirect("/")
+    return redirect("/login")
 
 
 @app.route("/profile/<int:user_id>")
 def user_detail(user_id):
     """Show info about user."""
 
+    # TODO: add security to redirct to login if no user session
     user = User.query.get(user_id)
-    return render_template("user_profile.html", user=user)
+    return render_template("user_profile.html", email=user.email, user_id=user.user_id)
 
 
 # @app.route('/posts', methods=['GET'])
@@ -144,12 +146,17 @@ def post_detail(post_id):
 
     return render_template(
         "post.html",
-        event_date=user_post.event_date,
-        ptype=user_post.ptype,
-        subject=user_post.subject,
-        vehicle_plate=user_post.vehicle_plate,
-        location=user_post.location
+        user_post=user_post,
         )
+
+    # return render_template(
+    #     "post.html",
+    #     event_date=user_post.event_date,
+    #     ptype=user_post.ptype,
+    #     subject=user_post.subject,
+    #     vehicle_plate=user_post.vehicle_plate,
+    #     location=user_post.location
+    #     )
 
 
 @app.route("/posts/<int:post_id>", methods=['POST'])
@@ -201,5 +208,7 @@ if __name__ == "__main__":
 
     # Use the DebugToolbar
     DebugToolbarExtension(app)
+    app.jinja_env.auto_reload = app.debug  # make sure templates, etc. are not cached in debug mode
 
-    app.run()
+    # app.run()
+    app.run(port=5000, host='0.0.0.0')
