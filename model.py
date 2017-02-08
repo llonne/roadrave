@@ -2,6 +2,8 @@
 # import heapq
 # import time
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import relationship
+# from sqlalchemy import Table, Column, Integer, ForeignKey
 
 #  Do i need both of these?
 # from SQLAlchemy import DateTime
@@ -32,28 +34,35 @@ class User(db.Model):
     username = db.Column(db.String(64))  # default auto-generate?
     date_user_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
 
+    vehicles = relationship("UserVehicle", back_populates="user")
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
         return "<User user_id=%s email=%s>" % (self.user_id, self.email)
 
 
-# class UserVehicle(db.Model):  # do we need this once users claim vehicles?
-#     """Association table for users and vehicles on roadrave site."""
+class UserVehicle(db.Model):  # do we need this once users claim vehicles?
+    """Association table for users and vehicles on roadrave site because vehicles can exist without user."""
 
-#     __tablename__ = "uservehicles"
+    __tablename__ = "uservehicles"
 
-#     # Q: do we need id for association table?
-#     user_vehicle_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-#     user_id = db.Column(db.Integer, nullable=False)
-#     vehicle_id = db.Column(db.Integer, nullable=False)
-#     date_linked = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
-#     date_unlinked = db.Column(db.DateTime)
+    # Q: do we need id for association table?
+    # user_vehicle_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), primary_key=True)
+    vehicle_plate = db.Column(db.String(64), db.ForeignKey('vehicles.vehicle_plate'), primary_key=True)
+    date_linked = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    # date_unlinked = db.Column(db.DateTime)
+    # user_id_owner = db.Column(db.Integer)  # boolean...optionally allow users to claim ownership of vehicle. add to UserVehicle table?
 
-#     def __repr__(self):
-#         """Provide helpful representation when printed."""
+    # from Association object secion here: http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html
+    vehicle = relationship("Vehicle", back_populates="users")
+    user = relationship("User", back_populates="vehicles")
 
-#         return "<UserVehicle user_id=%d vehicle_id=%d>" % (self.user_id, self.vehicle_id)
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<UserVehicle user_id=%d vehicle_plate=%d>" % (self.user_id, self.vehicle_plate)
 
 
 class Vehicle(db.Model):
@@ -61,23 +70,26 @@ class Vehicle(db.Model):
 
     __tablename__ = "vehicles"
 
-    veh_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    plate = db.Column(db.String(64),  nullable=False)  # eventually vehicles can change plates?
+    vehicle_plate = db.Column(db.String(64), primary_key=True)  # license plate
     # TODO: restrict to US plates and 7 chars in program input. Future allow EU and symbols.
     vtype = db.Column(db.String(64))  # car, truck, motorcycle, semi, plane, boat, etc.
     # veh_style = db.Column(db.String(64)) # sedan, coupe, flatbed, hazmat, sport, etc.
     make = db.Column(db.String(64))
     model = db.Column(db.String(64))
     color = db.Column(db.String(64))
-    user_id_owner = db.Column(db.Integer)  # optionally allow users to claim ownership of vehicle. add to UserVehicle table?
-    user_id_adder = db.Column(db.Integer, nullable=False)  # user adding car. how to require userid as default?
+    # user_id_adder = db.Column(db.Integer, nullable=False)  # user adding car. how to require userid as default?
     date_veh_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
-    # allow owners?
+    # user_id_owner = db.Column(db.Integer, nullable=False)  # allow owners?
+
+    # TODO: # Define relationship to user db through UserVehicles
+    # user = db.relationship("User",
+    #                        backref=db.backref("roadrave", order_by=user_id))
+    users = relationship("UserVehicle", back_populates="vehicle")
 
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Vehicle veh_id=%d plate=%s>" % (self.veh_id, self.plate)
+        return "<Vehicle vehicle_plate=%d>" % (self.vehicle_plate)
 
 
 class Post(db.Model):
@@ -87,7 +99,7 @@ class Post(db.Model):
 
     post_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))  # user posting
-    veh_id = db.Column(db.Integer, db.ForeignKey('vehicles.veh_id'))
+    vehicle_plate = db.Column(db.String(64), db.ForeignKey('vehicles.vehicle_plate'))
     # TODO: change to be vehicle id foreign key? update other pieces of schema...
     # plate = db.Column(db.String(64))  # postee
     # TODO: default current, but changeable for post-posting after incident
@@ -99,21 +111,19 @@ class Post(db.Model):
     subject = db.Column(db.String(140), nullable=False)
     date_post_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
     # date_last_edited = db.Column(db.DateTime)
-    date_post_removed = db.Column(db.DateTime)
+    # date_post_removed = db.Column(db.DateTime)
 
-    # Define relationship to user db
-    user = db.relationship("User",
-                           backref=db.backref("roadrave", order_by=user_id))
+    # Define relationship to users db
+    user = db.relationship("User", backref=db.backref("roadrave", order_by=user_id))
 
-    # Define relationship to vehicle
-    vehicle = db.relationship("Vehicle",
-                              backref=db.backref("roadrave", order_by=plate))
+    # Define relationship to vehicles db
+    vehicle = db.relationship("Vehicle", backref=db.backref("roadrave", order_by=vehicle_plate))
 
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Roadrate post_id=%s user_id=%s plate=%s mood=%s location=%s>" % (
-            self.post_id, self.user_id, self.plate, self.mood, self.location)
+        return "<Roadrate post_id=%s user_id=%s vehicle_plate=%s mood=%s location=%s>" % (
+            self.post_id, self.user_id, self.vehicle_plate, self.mood, self.location)
 
 
 ##############################################################################

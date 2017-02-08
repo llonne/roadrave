@@ -17,7 +17,7 @@
           <p>Post Event Date: {{ user_post.event_date }}</p>
           <p>Post Type: {{ user_post.ptype }}</p>
           <p>Post Subject: {{ user_post.subject }}</p>
-          <p>Post Plate: {{ user_post.plate }}</p>
+          <p>Post Plate: {{ user_post.vehicle_plate }}</p>
           <p>Post Location: {{ user_post.location }}</p>
         {% endif %}
           <form action="/post/{{ post.post_id }}" method="POST">
@@ -35,7 +35,7 @@
                              class="form-control input-sm">
                   </label>
                   <label>Plate:
-                    <input type="text" name="plate"
+                    <input type="text" name="vehicle_plate"
                              class="form-control input-sm">
                   </label>
                   <label>Location:

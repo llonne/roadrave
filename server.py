@@ -139,7 +139,7 @@ def post_detail(post_id):
     #     event_date = None
     #     ptype = None
     #     subject = None
-    #     plate = None
+    #     vehicle_plate = None
     #     location = None
 
     return render_template(
@@ -147,7 +147,7 @@ def post_detail(post_id):
         event_date=user_post.event_date,
         ptype=user_post.ptype,
         subject=user_post.subject,
-        plate=user_post.plate,
+        vehicle_plate=user_post.vehicle_plate,
         location=user_post.location
         )
 
@@ -160,7 +160,7 @@ def post_detail_process(post_id):
     event_date = request.form["event_date"]
     ptype = request.form["ptype"]
     subject = request.form["subject"]
-    plate = request.form["plate"]
+    vehicle_plate = request.form["vehicle_plate"]
     location = request.form["location"]
 
     user_id = session.get("user_id")
@@ -176,12 +176,12 @@ def post_detail_process(post_id):
         post.event_date = event_date
         post.ptype = ptype
         post.subject = subject
-        post.plate = plate
+        post.vehicle_plate = vehicle_plate
         post.location = location
         flash("Post updated.")
 
     else:
-        post = Post(event_date=event_date, ptype=ptype, subject=subject, plate=plate, location=location, user_id=user_id)
+        post = Post(event_date=event_date, ptype=ptype, subject=subject, vehicle_plate=vehicle_plate, location=location, user_id=user_id)
         flash("Post added.")
         db.session.add(post)
 
