@@ -1,0 +1,5 @@
+1|plate1|01/01/2017|ptype1|location1
+2|plate2|01/01/2017|ptype2|location2
+3|plate3|01/01/2017|ptype3|location3
+4|plate4|01/01/2017|ptype4|location4
+5|plate5|01/01/2017|ptype5|location5

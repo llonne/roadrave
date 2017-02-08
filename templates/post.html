@@ -14,7 +14,7 @@
       {% if "user_id" in session %}
           <h2>Your Post</h2>
         {% if user_post %}
-          <p>Post Date: {{ user_post.date }}</p>
+          <p>Post Event Date: {{ user_post.event_date }}</p>
           <p>Post Type: {{ user_post.ptype }}</p>
           <p>Post Subject: {{ user_post.subject }}</p>
           <p>Post Plate: {{ user_post.plate }}</p>
@@ -22,8 +22,8 @@
         {% endif %}
           <form action="/post/{{ post.post_id }}" method="POST">
               <div class="form-group">
-                  <label>Date:
-                    <input type="date" name="date"
+                  <label>Event Date:
+                    <input type="date" name="event_date"
                              class="form-control input-sm">
                   </label>
                   <label>Type:

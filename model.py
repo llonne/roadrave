@@ -29,7 +29,8 @@ class User(db.Model):
     email = db.Column(db.String(64), nullable=False)
     # TODO: secure pwd and add min requirements
     password = db.Column(db.String(64), nullable=False)
-    username = db.Column(db.String(64))
+    username = db.Column(db.String(64)) # default auto-generate?
+    date_user_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -37,19 +38,22 @@ class User(db.Model):
         return "<User user_id=%s email=%s>" % (self.user_id, self.email)
 
 
-class UserVehicle(db.Model):
-    """Association table for users and vehicles on roadrave site."""
+# class UserVehicle(db.Model):  # do we need this once users claim vehicles?
+#     """Association table for users and vehicles on roadrave site."""
 
-    __tablename__ = "uservehicles"
+#     __tablename__ = "uservehicles"
 
-    # Q: do we need id for association table?
-    user_id = db.Column(db.Integer, nullable=False)
-    vehicle_id = db.Column(db.Integer, nullable=False)
+#     # Q: do we need id for association table?
+#     user_vehicle_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+#     user_id = db.Column(db.Integer, nullable=False)
+#     vehicle_id = db.Column(db.Integer, nullable=False)
+#     date_linked = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+#     date_unlinked = db.Column(db.DateTime)
 
-    def __repr__(self):
-        """Provide helpful representation when printed."""
+#     def __repr__(self):
+#         """Provide helpful representation when printed."""
 
-        return "<UserVehicle user_id=%d vehicle_id=%d>" % (self.user_id, self.vehicle_id)
+#         return "<UserVehicle user_id=%d vehicle_id=%d>" % (self.user_id, self.vehicle_id)
 
 
 class Vehicle(db.Model):
@@ -65,6 +69,10 @@ class Vehicle(db.Model):
     make = db.Column(db.String(64))
     model = db.Column(db.String(64))
     color = db.Column(db.String(64))
+    user_id_owner = db.Column(db.Integer) # optionally allow users to claim ownership of vehicle. add to UserVehicle table?
+    user_id_adder = db.Column(db.Integer, default=user.user_id, nullable=False)  # user adding. how to add userid as default?
+    date_veh_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    # allow owners?
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -81,14 +89,17 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))  # user posting
     plate = db.Column(db.String(64), db.ForeignKey('vehicles.plate'))  # postee
     # TODO: default current, but changeable for post-posting after incident
-    date = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    event_date = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
     # TODO: program constrain to: comment, compliment, criticism
     ptype = db.Column(db.String(64), nullable=False)  # set default as comment here?
     # TODO: default get location api, or zip code
     location = db.Column(db.String(64), nullable=False)
     subject = db.Column(db.String(140), nullable=False)
+    date_post_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    # date_last_edited = db.Column(db.DateTime)
+    date_post_removed = db.Column(db.DateTime)
 
-    # Define relationship to user
+    # Define relationship to user db
     user = db.relationship("User",
                            backref=db.backref("roadrave", order_by=user_id))
 
