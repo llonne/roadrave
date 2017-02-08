@@ -29,7 +29,7 @@ class User(db.Model):
     email = db.Column(db.String(64), nullable=False)
     # TODO: secure pwd and add min requirements
     password = db.Column(db.String(64), nullable=False)
-    username = db.Column(db.String(64)) # default auto-generate?
+    username = db.Column(db.String(64))  # default auto-generate?
     date_user_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     def __repr__(self):
@@ -69,8 +69,8 @@ class Vehicle(db.Model):
     make = db.Column(db.String(64))
     model = db.Column(db.String(64))
     color = db.Column(db.String(64))
-    user_id_owner = db.Column(db.Integer) # optionally allow users to claim ownership of vehicle. add to UserVehicle table?
-    user_id_adder = db.Column(db.Integer, default=user.user_id, nullable=False)  # user adding. how to add userid as default?
+    user_id_owner = db.Column(db.Integer)  # optionally allow users to claim ownership of vehicle. add to UserVehicle table?
+    user_id_adder = db.Column(db.Integer, nullable=False)  # user adding car. how to require userid as default?
     date_veh_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
     # allow owners?
 
@@ -87,7 +87,9 @@ class Post(db.Model):
 
     post_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))  # user posting
-    plate = db.Column(db.String(64), db.ForeignKey('vehicles.plate'))  # postee
+    veh_id = db.Column(db.Integer, db.ForeignKey('vehicles.veh_id'))
+    # TODO: change to be vehicle id foreign key? update other pieces of schema...
+    # plate = db.Column(db.String(64))  # postee
     # TODO: default current, but changeable for post-posting after incident
     event_date = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
     # TODO: program constrain to: comment, compliment, criticism

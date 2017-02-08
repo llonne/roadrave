@@ -5,7 +5,7 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import connect_to_db, db, User, Vehicle, Post
+from model import connect_to_db, db, User, Post  # Vehicle
 
 
 app = Flask(__name__)
@@ -39,7 +39,7 @@ def register_process():
     # Get form variables
     email = request.form["email"]
     password = request.form["password"]
-    username = request.form["username"])
+    username = request.form["username"]
 
     new_user = User(email=email, password=password, username=username)
 
@@ -98,18 +98,19 @@ def user_detail(user_id):
     return render_template("user_profile.html", user=user)
 
 
-@app.route('/posts', methods=['GET'])
-def login_form():
-    """Show all posts for user."""
+# @app.route('/posts', methods=['GET'])
+# def show_posts():
+#     """Show all posts for user."""
 
-    user_id = session.get("user_id")
-    if user_id:
-        user_posts = Post.query.filter_by(user_id=user_id)
-    else:
-        flash("Please log in to access posts.")
-        return redirect("/login")
+#     user_id = session.get("user_id")
 
-    return render_template("all_posts.html")
+#     if user_id:
+#         user_posts = Post.query.filter_by(user_id=user_id)
+#     else:
+#         flash("Please log in to access posts.")
+#         return redirect("/login")
+
+#     return render_template("all_posts.html")
 
 
 @app.route("/posts/<int:post_id>", methods=['GET'])
@@ -132,21 +133,22 @@ def post_detail(post_id):
         # user_post = None
         # raise Exception("No user logged in.")
 
-    if (not user_post):
-        flash("You have no posts yet. Please add one:")
-        event_date=None
-        ptype=None
-        subject=None
-        plate=None
-        location=None
+    # add form to add post and corresponding route
+    # if (not user_post):
+    #     flash("You have no posts yet. Please add one:")
+    #     event_date = None
+    #     ptype = None
+    #     subject = None
+    #     plate = None
+    #     location = None
 
     return render_template(
         "post.html",
         event_date=user_post.event_date,
         ptype=user_post.ptype,
         subject=user_post.subject,
-        plate=plate,
-        location=location
+        plate=user_post.plate,
+        location=user_post.location
         )
 
 
@@ -171,7 +173,7 @@ def post_detail_process(post_id):
     post = Post.query.filter_by(post_id=post_id, user_id=user_id).first()
 
     if post:
-        post.date = date
+        post.event_date = event_date
         post.ptype = ptype
         post.subject = subject
         post.plate = plate
@@ -179,7 +181,7 @@ def post_detail_process(post_id):
         flash("Post updated.")
 
     else:
-        post = Post(date=date, ptype=ptype, subject=subject, plate=plate, location=location, user_id=user_id)
+        post = Post(event_date=event_date, ptype=ptype, subject=subject, plate=plate, location=location, user_id=user_id)
         flash("Post added.")
         db.session.add(post)
 
