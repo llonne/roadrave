@@ -1,5 +1,5 @@
-plate1|type1|make1|model1|color1|1|1
-plate2|type2|make2|model2|color2|2|2
-plate3|type3|make3|model3|color3|3|3
-plate4|type4|make4|model4|color4|4|4
-plate5|type5|make5|model5|color5|5|5
+plate1|type1|make1|model1|color1
+plate2|type2|make2|model2|color2
+plate3|type3|make3|model3|color3
+plate4|type4|make4|model4|color4
+plate5|type5|make5|model5|color5

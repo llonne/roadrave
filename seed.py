@@ -40,18 +40,19 @@ def load_vehicles():
     for i, row in enumerate(open("seed_data/vehicles.txt")):
         row = row.rstrip()
 
-        plate, vtype, make, model, color, user_id_owner, user_id_adder = row.split("|")
+        vehicle_plate, vtype, make, model, color = row.split("|")
 
-        user_id_owner = int(user_id_owner)
-        user_id_adder= int(user_id_adder)
+        # user_id_owner = int(user_id_owner)
+        # user_id_adder= int(user_id_adder)
 
-        vehicle = Vehicle(plate=plate,
+        vehicle = Vehicle(vehicle_plate=vehicle_plate,
                           vtype=vtype,
                           make=make,
                           model=model,
                           color=color,
-                          user_id_owner=user_id_owner,
-                          user_id_adder=user_id_adder)
+                          # user_id_owner=user_id_owner,
+                          # user_id_adder=user_id_adder
+                          )
 
         # We need to add to the session or it won't ever be stored
         db.session.add(vehicle)
@@ -72,15 +73,15 @@ def load_posts():
     for i, row in enumerate(open("seed_data/posts.txt")):
         row = row.rstrip()
 
-        user_id, plate, event_date, ptype, location, subject, date_post_added, date_post_removed = row.split("|")
+        user_id, vehicle_plate, event_date, ptype, location, subject = row.split("|")
 
         user_id = int(user_id)
-        event_date = datetime.datetime.strptime(event_date, "%d-%b-%Y")
+        event_date = datetime.datetime.strptime(event_date, "%d-%m-%Y")
         # date_post_added = datetime.datetime.strptime(date_post_added, "%d-%b-%Y")
         # date_post_removed = datetime.datetime.strptime(date_post_removed, "%d-%b-%Y")
 
         post = Post(user_id=user_id,
-                    plate=plate,
+                    vehicle_plate=vehicle_plate,
                     event_date=event_date,
                     ptype=ptype,
                     location=location,
