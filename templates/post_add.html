@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="well spaced" style="width:97%;">
+<h1>Add a Post:</h1>
+
+<div class="row">
+
+    <div class="col-xs-12 col-lg-6">
+
+    </div>
+
+    <div class="col-xs-12 col-lg-6">
+      {% if "user_id" in session %}
+          <h2>Add Post</h2>
+          <form action="/posts/add" method="POST">
+              <div class="form-group">
+                  <label>Event Date:
+                    <input type="date" name="event_date"
+                             class="form-control input-sm">
+                  </label>
+                  <label>Location:
+                    <input type="text" name="location"
+                             class="form-control input-sm">
+                  </label>
+                  <label>Post type (comment, compliment, criticism):
+                    <input type="text" name="ptype"
+                             class="form-control input-sm">
+                  </label>
+                  <label>Post message:
+                    <input type="text" name="subject"
+                             class="form-control input-sm">
+                  </label>
+                  </label>Vehicle plate:
+                    <input type="text" name="vehicle_plate"
+                             class="form-control input-sm">
+                  </label>
+                  </label>Vehicle type (car, truck, MC):
+                    <input type="text" name="vtype"
+                             class="form-control input-sm">
+                  </label>
+                  </label>Vehicle make:
+                    <input type="text" name="make"
+                             class="form-control input-sm">
+                  </label>
+                  </label>Vehicle model:
+                    <input type="text" name="model"
+                             class="form-control input-sm">
+                  </label>
+                  </label>Vehicle color:
+                    <input type="text" name="color"
+                             class="form-control input-sm">
+                  </label>
+              </div>
+              <input type="submit" value="Submit"
+                     class="btn btn-danger">
+          </form>
+      {% endif %}
+
+    </div>
+</div>
+</div>
+{% endblock %}
