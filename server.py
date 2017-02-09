@@ -29,6 +29,8 @@ def index():
 def register_form():
     """Show form for user signup."""
 
+    # TODO: check if user logged in, redirect to profile. flash message
+
     return render_template("register_form.html")
 
 
@@ -43,11 +45,17 @@ def register_process():
 
     new_user = User(email=email, password=password, username=username)
 
+    # TODO: check if user already exists and redirect to login.
+
     db.session.add(new_user)
     db.session.commit()
 
+    # do we need to get new user from db to get user_id for redirect?
+    user = User.query.filter_by(email=email, password=password).first()
+
     flash("User %s added." % email)
-    return redirect("/users/%s" % new_user.user_id)
+    # return redirect("/profile/%s" % new_user.user_id)
+    return redirect("/profile/%s" % user.user_id)
 
 
 @app.route('/login', methods=['GET'])
@@ -158,17 +166,11 @@ def post_detail(post_id):
     #     location=user_post.location
     #     )
 
+# TODO: add /post route for adding post and update edit
 
 @app.route("/posts/<int:post_id>", methods=['POST'])
-def post_detail_process(post_id):
-    """Add/edit a post."""
-
-    # Get form variables
-    event_date = request.form["event_date"]
-    ptype = request.form["ptype"]
-    subject = request.form["subject"]
-    vehicle_plate = request.form["vehicle_plate"]
-    location = request.form["location"]
+def post_detail_edit(post_id):
+    """Edit a post."""
 
     user_id = session.get("user_id")
 
@@ -177,7 +179,17 @@ def post_detail_process(post_id):
         return redirect("/login")
         # raise Exception("No user logged in.")
 
+    # Get form variables
+    event_date = request.form["event_date"]
+    ptype = request.form["ptype"]
+    subject = request.form["subject"]
+    vehicle_plate = request.form["vehicle_plate"]
+    location = request.form["location"]
+
+    # TODO: iterate through form variables to eliminate blanks
+
     post = Post.query.filter_by(post_id=post_id, user_id=user_id).first()
+
 
     if post:
         post.event_date = event_date
@@ -186,6 +198,7 @@ def post_detail_process(post_id):
         post.vehicle_plate = vehicle_plate
         post.location = location
         flash("Post updated.")
+        # db.session.update(post)
 
     else:
         post = Post(event_date=event_date, ptype=ptype, subject=subject, vehicle_plate=vehicle_plate, location=location, user_id=user_id)

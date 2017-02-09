@@ -31,6 +31,29 @@ def load_users():
     # Once we're done, we should commit our work
     db.session.commit()
 
+# def load_uservehicles():
+#     """Load uesrs and their vehicles from uservehicless.txt into database."""
+
+#     print "UserVehicles"
+
+#     for i, row in enumerate(open("seed_data/uservehicles.txt")):
+#         row = row.rstrip()
+#         user_id, vehicle_plate = row.split("|")
+
+#         uservehicle = UserVehicle(user_id=user_id,
+#                                   vehicle_plate=vehicle_plate
+#                                  )
+
+#         # We need to add to the session or it won't ever be stored
+#         db.session.add(uservehicle)
+
+#         # # provide some sense of progress
+#         # if i % 100 == 0:
+#         #     print i
+
+#     # Once we're done, we should commit our work
+#     db.session.commit()
+
 
 def load_vehicles():
     """Load vehicles from vehicles.txt into database."""
@@ -126,6 +149,7 @@ if __name__ == "__main__":
 
     load_users()
     load_vehicles()
+    # load_uservehicles()
     load_posts()
     set_val_user_id()
 
