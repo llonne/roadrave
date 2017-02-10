@@ -108,23 +108,24 @@ def user_detail(user_id):
     return render_template("user_profile.html", email=user.email, user_id=user.user_id)
 
 
-# @app.route('/posts', methods=['GET'])
-# def show_posts():
-#     """Show all posts for user."""
+@app.route("/posts", methods=['GET'])
+def posts_list():
+    """Show list of all posts for all users."""
 
-#     user_id = session.get("user_id")
+    user_id = session.get("user_id")
 
-#     if user_id:
-#         user_posts = Post.query.filter_by(user_id=user_id)
-#     else:
-#         flash("Please log in to access posts.")
-#         return redirect("/login")
+    if user_id:
+        posts = Post.query.all()
+    else:
+        flash("Please log in to access posts.")
+        return redirect("/login")
 
-#     return render_template("all_posts.html")
+    return render_template("post_list.html", posts=posts)
 
-@app.route("/posts")
-def user_posts_list():
-    """Show list of user's posts."""
+
+@app.route("/posts/<int:user_id>", methods=['GET'])
+def user_posts_list(user_id):
+    """Show list of all posts by specified user."""
 
     user_id = session.get("user_id")
 
@@ -137,45 +138,20 @@ def user_posts_list():
     return render_template("post_list.html", posts=posts)
 
 
-@app.route("/posts/<int:post_id>", methods=['GET'])
+@app.route("/posts/detail/<int:post_id>", methods=['GET'])
 def post_detail(post_id):
-    """Show info about a post.
-
-    If a user is logged in, let them add/edit a post.
-    """
-
-    # post = Post.query.get(post_id)
+    """Show details about a post."""
 
     user_id = session.get("user_id")
 
     if user_id:
         user_post = Post.query.filter_by(
-            post_id=post_id, user_id=user_id).first()
+            post_id=post_id).first()
     else:
         flash("Please log in to access posts.")
         return redirect("/login")
-        # user_post = None
-        # raise Exception("No user logged in.")
-
-    # add form to add post and corresponding route
-    # if (not user_post):
-    #     flash("You have no posts yet. Please add one:")
-    #     event_date = None
-    #     ptype = None
-    #     subject = None
-    #     vehicle_plate = None
-    #     location = None
 
     return render_template("post.html", user_post=user_post)
-
-    # return render_template(
-    #     "post.html",
-    #     event_date=user_post.event_date,
-    #     ptype=user_post.ptype,
-    #     subject=user_post.subject,
-    #     vehicle_plate=user_post.vehicle_plate,
-    #     location=user_post.location
-    #     )
 
 
 @app.route("/posts/add", methods=['GET'])
@@ -187,7 +163,6 @@ def post_add_form():
     if not user_id:
         flash("Please log in to add posts.")
         return redirect("/login")
-        # raise Exception("No user logged in.")
 
     return render_template("post_add.html")
 
@@ -231,46 +206,64 @@ def post_add():
 
     return redirect("/posts")
 
-# @app.route("/posts/<int:post_id>", methods=['POST'])
-# def post_detail_edit(post_id):
-#     """Edit a post."""
 
-#     user_id = session.get("user_id")
+@app.route("/posts/edit/<int:post_id>", methods=['GET'])
+def post_edit_form(post_id):
+    """Render form to edit a post."""
 
-#     if not user_id:
-#         flash("Please log in to access posts.")
-#         return redirect("/login")
-#         # raise Exception("No user logged in.")
+    user_id = session.get("user_id")
 
-#     # Get form variables
-#     event_date = request.form["event_date"]
-#     ptype = request.form["ptype"]
-#     subject = request.form["subject"]
-#     vehicle_plate = request.form["vehicle_plate"]
-#     location = request.form["location"]
+    if not user_id:
+        flash("Please log in to access posts.")
+        return redirect("/login")
+        # raise Exception("No user logged in.")
 
-#     # TODO: iterate through form variables to eliminate blanks
+    user_post = Post.query.filter_by(post_id=post_id, user_id=user_id).first()
+    user_post.event_date = user_post.event_date.strftime('%Y-%m-%d')
 
-#     post = Post.query.filter_by(post_id=post_id, user_id=user_id).first()
+    # vehicle = Vehicle.query.filter_by(vehicle_plate=user_post.vehicle_plate).first()
+
+    # return render_template("post_edit.html", user_post=user_post, vehicle=vehicle)
+    return render_template("post_edit.html", user_post=user_post)
 
 
-#     if post:
-#         post.event_date = event_date
-#         post.ptype = ptype
-#         post.subject = subject
-#         post.vehicle_plate = vehicle_plate
-#         post.location = location
-#         flash("Post updated.")
-#         # db.session.update(post)
+@app.route("/posts/edit/<int:post_id>", methods=['POST'])
+def post_edit(post_id):
+    """Submit edits to a post."""
 
-#     else:
-#         post = Post(event_date=event_date, ptype=ptype, subject=subject, vehicle_plate=vehicle_plate, location=location, user_id=user_id)
-#         flash("Post added.")
-#         db.session.add(post)
+    user_id = session.get("user_id")
 
-#     db.session.commit()
+    if not user_id:
+        flash("Please log in to access posts.")
+        return redirect("/login")
+        # raise Exception("No user logged in.")
 
-#     return redirect("/posts/%s" % post_id)
+    # Get form variables
+    event_date = request.form["event_date"]
+    ptype = request.form["ptype"]
+    subject = request.form["subject"]
+    # vehicle_plate = request.form["vehicle_plate"]
+    location = request.form["location"]
+
+    # TODO: iterate through form variables to eliminate blanks
+
+    post = Post.query.filter_by(post_id=post_id, user_id=user_id).first()
+
+    if post:
+        post.event_date = event_date
+        post.ptype = ptype
+        post.subject = subject
+        # post.vehicle_plate = vehicle_plate
+        post.location = location
+        flash("Post updated.")
+    else:
+        # post = Post(event_date=event_date, ptype=ptype, subject=subject, vehicle_plate=vehicle_plate, location=location, user_id=user_id)
+        flash("Error updating post.")
+        # db.session.add(post)
+
+    db.session.commit()
+
+    return redirect("/posts/%s" % post_id)
 
 
 if __name__ == "__main__":

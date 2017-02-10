@@ -1,28 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="well spaced" style="width:97%;">
+<!-- <div class="well spaced" style="width:97%;">
 <h1>Post Details</h1>
 
 <div class="row">
 
     <div class="col-xs-12 col-lg-6">
 
-    </div>
+    </div> -->
 
-    <div class="col-xs-12 col-lg-6">
+    <div class="well spaced" style="width:50%;">
+
       {% if "user_id" in session %}
-          <h2>Your Post</h2>
+          <h2>Post Details:</h2>
         {% if user_post %}
           <p>Post Event Date: {{ user_post.event_date }}</p>
           <p>Post Type: {{ user_post.ptype }}</p>
           <p>Post Subject: {{ user_post.subject }}</p>
           <p>Post Plate: {{ user_post.vehicle_plate }}</p>
           <p>Post Location: {{ user_post.location }}</p>
+          {% if session['user_id'] == user_post.user_id %}
+            <!-- <button type="button">Edit Post</button> -->
+            <a href="/posts/edit/{{ user_post.post_id }}">Edit post.<a>
+          {% endif %}
+        {% else %}
+          <p>Post not found.</p>
         {% endif %}
+      {% else %}
+        <p>Please log in to view.</p>
       {% endif %}
 
     </div>
-</div>
-</div>
+<!-- </div>
+</div> -->
 {% endblock %}

@@ -1,21 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <div class="well spaced" style="width:50%;">
+    <div class="well spaced" style="width:97%;">
         <h2>Posts</h2>
         <ul>
             {% if posts %}
+                <!-- <table cellspacing="20" cellpadding="20"> -->
+                    <table>
+                    <thead>
+                        <tr>
+                            <td>Date</td>
+                            <td>Plate</td>
+                            <td>Type</td>
+                            <td>Location</td>
+                            <td>Subject</td>
+                        </tr>
+                    </thead>
                 {% for post in posts %}
-                    <li>
-                    <a href="/posts/{{ post.post_id }}">{{ post.subject }}</a>
-                    </li>
+                        <tr>
+                            <td>{{ post.event_date }}</td>
+                            <td>{{ post.vehicle_plate }}</td>
+                            <td>{{ post.ptype }}</td>
+                            <td>{{ post.location }}</td>
+                            <td><a href="/posts/detail/{{ post.post_id }}">{{ post.subject }}</a></td>
+                        </tr>
                 {% endfor %}
+                </table>
             {% else %}
                 <p>No posts yet.</p>
             {% endif %}
         </ul>
-    </div>
-    <div>
-        <a href="/posts/add">Add a post.</a>
+        <p>
+            <a href="/posts/add">Add a post.</a>
+        </p>
     </div>
 {% endblock %}

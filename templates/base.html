@@ -80,10 +80,11 @@
              id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
 <!--                 <li><a href="/dashboard">View Dashboard</a></li> -->
-                <li><a href="/posts">View All Posts</a></li>
+                <li><a href="/posts">All Posts</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               {% if "user_id" in session %}
+                  <li><a href="/posts/{{ session['user_id'] }}">My Posts</a></li>
                   <li><a href="/profile/{{ session['user_id'] }}">Profile</a></li>
                   <li><a href="/logout">Logout</a></li>
               {% else %}
