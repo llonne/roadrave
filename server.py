@@ -1,4 +1,4 @@
-"""Roadrave site."""
+"""Roadrave site allows users to post comments to vehicle license plates."""
 
 from jinja2 import StrictUndefined
 
@@ -6,7 +6,6 @@ from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, User, Post, Vehicle
-
 
 app = Flask(__name__)
 
@@ -53,6 +52,7 @@ def register_process():
     # do we need to get new user from db to get user_id for redirect?
     user = User.query.filter_by(email=email, password=password).first()
 
+    session['user_id'] = user.user_id
     flash("User %s added." % email)
     # return redirect("/profile/%s" % new_user.user_id)
     return redirect("/profile/%s" % user.user_id)
@@ -99,14 +99,61 @@ def logout():
     return redirect("/login")
 
 
-@app.route("/profile/<int:user_id>")
-def user_detail(user_id):
+@app.route("/profile/<int:user_id>", methods=['GET'])
+def show_user_detail(user_id):
     """Show info about user."""
 
     # TODO: add security to redirct to login if no user session
+    # TODO: check for userid and add to return if exists
     user = User.query.get(user_id)
-    return render_template("user_profile.html", email=user.email, user_id=user.user_id)
+    return render_template("profile.html", email=user.email, user_id=user.user_id)
 
+
+@app.route("/profile/edit/<int:user_id>", methods=['GET'])
+def show_user_profile_for_edit(user_id):
+    """Show info about user."""
+
+    # TODO: add security to redirct to login if no user session
+    # TODO: check for userid and add to return if exists
+    user = User.query.get(user_id)
+    return render_template("profile_edit.html", email=user.email, user_id=user.user_id)
+
+
+@app.route("/profile/edit/<int:user_id>", methods=['POST'])
+def edit_user_detail(user_id):
+    """Edit info about user."""
+
+    user_id = session.get("user_id")
+
+    if not user_id:
+        flash("Please log in to access posts.")
+        return redirect("/login")
+        # raise Exception("No user logged in.")
+
+    # Get form variables
+    email = request.form["email"]
+    old_pwd = request.form["old_pwd"]
+    new_pwd = request.form["new_pwd"]
+
+    user = User.query.get(user_id)
+    # TODO: iterate through form variables to eliminate blanks
+    # TODO: make sure old_pwd matches one in DB
+    # TODO: secure pwds
+
+    # TODO: only change variables that have changed
+    if user:
+        user.email = email
+        user.password = new_pwd
+        flash("Profile updated.")
+    else:
+        # post = Post(event_date=event_date, ptype=ptype, subject=subject, vehicle_plate=vehicle_plate, location=location, user_id=user_id)
+        flash("Error updating profile.")
+        # db.session.add(post)
+
+    db.session.commit()
+
+    # return render_template("profile.html", email=user.email, user_id=user.user_id)
+    return redirect("/profile/edit/%s" % user_id)
 
 @app.route("/posts", methods=['GET'])
 def posts_list():
