@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="well spaced" style="width:50%">
+<div class="well spaced" style="width:97%">
   <h2>Profile</h2>
 
   <b><p style="color:red">Email: {{ email }}</p>
-  <p style="color:red">UserID: {{ user_id }}</p></b>
+  <p style="color:red">Username: {{ username }}</p></b>
   <br>
   <p>
-    <!-- <a href="/profile/edit/{{ user_id }}">Edit profile</a> -->
+  <a href="/profile/edit/{{ session['user_id'] }}">Edit profile</a>
 <!--   <h3>Vehicles</h3>
   <br>List of vehicles here<br>
   <br>Add Vehicle Form Here <br>

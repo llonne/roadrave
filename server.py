@@ -103,20 +103,23 @@ def logout():
 def show_user_detail(user_id):
     """Show info about user."""
 
+    user_id = session.get("user_id")
+
     # TODO: add security to redirct to login if no user session
     # TODO: check for userid and add to return if exists
     user = User.query.get(user_id)
-    return render_template("profile.html", email=user.email, user_id=user.user_id)
+    return render_template("profile.html", email=user.email, username=user.username)
 
 
 @app.route("/profile/edit/<int:user_id>", methods=['GET'])
 def show_user_profile_for_edit(user_id):
-    """Show info about user."""
+    """Show info about user for editing."""
 
+    user_id = session.get("user_id")
     # TODO: add security to redirct to login if no user session
     # TODO: check for userid and add to return if exists
     user = User.query.get(user_id)
-    return render_template("profile_edit.html", email=user.email, user_id=user.user_id)
+    return render_template("profile_edit.html", email=user.email, username=user.username)
 
 
 @app.route("/profile/edit/<int:user_id>", methods=['POST'])
@@ -132,28 +135,35 @@ def edit_user_detail(user_id):
 
     # Get form variables
     email = request.form["email"]
-    old_pwd = request.form["old_pwd"]
+    # old_pwd = request.form["old_pwd"]
+    username = request.form["username"]
     new_pwd = request.form["new_pwd"]
 
     user = User.query.get(user_id)
     # TODO: iterate through form variables to eliminate blanks
     # TODO: make sure old_pwd matches one in DB
     # TODO: secure pwds
-
     # TODO: only change variables that have changed
+    # if (user.password == old_pwd):
+
     if user:
         user.email = email
         user.password = new_pwd
+        user.username = username
         flash("Profile updated.")
     else:
-        # post = Post(event_date=event_date, ptype=ptype, subject=subject, vehicle_plate=vehicle_plate, location=location, user_id=user_id)
         flash("Error updating profile.")
-        # db.session.add(post)
+        return redirect("/profile/edit/%s" % user_id)
+
+    # else:
+    #     flash("Current password doesnt match. Try again.")
+    #     return redirect("/profile/edit/%s" % user_id)
 
     db.session.commit()
 
     # return render_template("profile.html", email=user.email, user_id=user.user_id)
-    return redirect("/profile/edit/%s" % user_id)
+    return redirect("/profile/%s" % user_id)
+
 
 @app.route("/posts", methods=['GET'])
 def posts_list():

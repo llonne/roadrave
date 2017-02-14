@@ -1,28 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="well spaced" style="width:50%;">
-<!--   <h2>Profile</h2>
+<div class="well spaced" style="width:97%;">
 
-  <b><p style="color:red">Email: {{ email }}</p>
-  <p style="color:red">UserID: {{ user_id }}</p>
-  <p style="color:red">Password: </p></b>
-  <br>
-  <p> -->
         {% if "user_id" in session %}
           <h2>Edit Profile</h2>
-          <form action="/profile/edit/{{ user.user_id }}" method="POST">
+          <form action="/profile/edit/{{ session['user_id'] }}" method="POST">
               <div class="form-group">
                   <label>Email:
                     <input type="text" name="email"
                              class="form-control input-sm"
-                             value="{{ user.email }}">
+                             value="{{ email }}">
                   </label><br>
-                  <label>Current Password:
+                  <label>Username:
+                    <input type="text" name="username"
+                             class="form-control input-sm"
+                             value="{{ username }}">
+                  </label><br>
+<!--                   <label>Current Password:
                     <input type="password" name="old_pwd"
                              class="form-control input-sm"
                              value="">
-                  </label><br>
+                  </label><br> -->
                   <!-- TODO: Find out how to secure pwds here. JS? -->
                   <label>New Password:
                     <input type="password" name="new_pwd"
@@ -35,7 +34,6 @@
           </form>
       {% endif %}
 
-    <!-- <a href="/profile/edit/{{ user_id }}">Edit profile</a> -->
 <!--   <h3>Vehicles</h3>
   <br>List of vehicles here<br>
   <br>Add Vehicle Form Here <br>

@@ -70,6 +70,7 @@ class Vehicle(db.Model):
 
     __tablename__ = "vehicles"
 
+    # TODO: decide if phase 1 even allow users to add anything but plate
     vehicle_plate = db.Column(db.String(64), primary_key=True)  # license plate
     # TODO: restrict to US plates and 7 chars in program input. Future allow EU and symbols.
     vtype = db.Column(db.String(64))  # car, truck, motorcycle, semi, plane, boat, etc.
