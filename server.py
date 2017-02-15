@@ -160,8 +160,7 @@ def edit_user_detail(user_id):
     #     return redirect("/profile/edit/%s" % user_id)
 
     db.session.commit()
-
-    # return render_template("profile.html", email=user.email, user_id=user.user_id)
+    
     return redirect("/profile/%s" % user_id)
 
 
@@ -169,13 +168,7 @@ def edit_user_detail(user_id):
 def posts_list():
     """Show list of all posts for all users."""
 
-    user_id = session.get("user_id")
-
-    if user_id:
-        posts = Post.query.all()
-    else:
-        flash("Please log in to access posts.")
-        return redirect("/login")
+    posts = Post.query.order_by(Post.event_date.desc()).all()
 
     return render_template("post_list.html", posts=posts)
 
@@ -199,14 +192,16 @@ def user_posts_list(user_id):
 def post_detail(post_id):
     """Show details about a post."""
 
-    user_id = session.get("user_id")
+    # user_id = session.get("user_id")
 
-    if user_id:
-        user_post = Post.query.filter_by(
-            post_id=post_id).first()
-    else:
-        flash("Please log in to access posts.")
-        return redirect("/login")
+    # if user_id:
+    user_post = Post.query.filter_by(
+        post_id=post_id).first()
+    # print user_post
+    # TODO: <Roadrate post_id=2 user_id=2 vehicle_plate=plate2 event_date=2017-01-01 00:00:00 ptype=ptype2 location=location2 subject=subj2>
+    # else:
+    #     flash("Please log in to access posts.")
+    #     return redirect("/login")
 
     return render_template("post.html", user_post=user_post)
 

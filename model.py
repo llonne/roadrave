@@ -123,8 +123,8 @@ class Post(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Roadrate post_id=%s user_id=%s vehicle_plate=%s mood=%s location=%s>" % (
-            self.post_id, self.user_id, self.vehicle_plate, self.mood, self.location)
+        return "<Roadrate post_id=%s user_id=%s vehicle_plate=%s event_date=%s ptype=%s location=%s subject=%s>" % (
+            self.post_id, self.user_id, self.vehicle_plate, self.event_date, self.ptype, self.location, self.subject)
 
 
 ##############################################################################
