@@ -4,30 +4,33 @@
 <div class="well spaced" style="width:97%;">
       {% if "user_id" in session %}
           <h2>Add Post</h2>
+          <p id="formInstructions">Fields marked with an asterisk (*) are required.</p>
           <form action="/posts/add" method="POST">
               <div class="form-group">
-                  <label>Event Date:
-                    <input type="date" name="event_date"
+                  <label>Event Date*:
+                    <input type="datetime-local" name="event_date" required='true'
                              class="form-control input-sm">
                   </label><br>
                   <!-- TODO: add google location services and address search -->
-                  <label>Location:
-                    <input type="text" name="location"
+                  <label>Location*:
+                    <input type="text" name="location" required='true'
                              class="form-control input-sm">
                   </label><br>
-                  <!-- TODO: add pull-down select menu -->
-                  <label>Post type (comment, compliment, criticism):
-                    <input type="text" name="ptype"
-                             class="form-control input-sm">
+                  <label>Post type*:
+                    <select  name="ptype" required='true' class="form-control input-sm">
+                      <option value="compliment">compliment</option>
+                      <option value="comment">comment</option>
+                      <option value="criticism">criticism</option>
+                    </select>
                   </label><br>
                   <!-- TODO: add character limit -->
-                  <label>Post message:
-                    <input type="text" name="subject"
+                  <label>Post message*:
+                    <input type="text" name="subject" maxlength='140' required='true'
                              class="form-control input-sm">
                   </label><br>
                   <!-- TODO: add search for existing vehicle plates -->
-                  <label>Vehicle plate:
-                    <input type="text" name="vehicle_plate"
+                  <label>Vehicle plate*:
+                    <input type="text" name="vehicle_plate" required='true'
                              class="form-control input-sm">
                   </label><br>
                   <label>Vehicle type (car, truck, MC):
