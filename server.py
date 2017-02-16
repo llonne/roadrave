@@ -44,7 +44,7 @@ def register_process():
 
     new_user = User(email=email, password=password, username=username)
 
-    # TODO: check if user already exists and redirect to login.
+    # TODO: check if user already exists and redirect to login or reset pwd, pwd hint, etc.
 
     db.session.add(new_user)
     db.session.commit()
@@ -160,7 +160,7 @@ def edit_user_detail(user_id):
     #     return redirect("/profile/edit/%s" % user_id)
 
     db.session.commit()
-    
+
     return redirect("/profile/%s" % user_id)
 
 
@@ -236,18 +236,20 @@ def post_add():
     subject = request.form["subject"]
     location = request.form["location"]
     vehicle_plate = request.form["vehicle_plate"]
-    vtype = request.form["vtype"]
-    make = request.form["make"]
-    model = request.form["model"]
-    color = request.form["color"]
+    # vtype = request.form["vtype"]
+    # make = request.form["make"]
+    # model = request.form["model"]
+    # color = request.form["color"]
 
     # TODO: iterate through form variables to eliminate blanks
 
+    # TODO: iterate through form variables to verify data formats
     # TODO: check if vehicle exists in DB, present user with choice, allow modification
     # vehicle_check = Vehicle.query.filter_by(vehicle_plate=vehicle_plate).first()
 
     # vehicle must exist in db before post can be added
-    vehicle = Vehicle(vehicle_plate=vehicle_plate, vtype=vtype, make=make, model=model, color=color)
+    # vehicle = Vehicle(vehicle_plate=vehicle_plate, vtype=vtype, make=make, model=model, color=color)
+    vehicle = Vehicle(vehicle_plate=vehicle_plate)
     db.session.add(vehicle)
     db.session.commit()
 

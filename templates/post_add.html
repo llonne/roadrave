@@ -31,7 +31,7 @@
                   <label>* Vehicle plate:
                     <input type="text" name="vehicle_plate" required='true'
                              class="form-control input-sm">
-                  </label><br>
+                  </label><br><!-- 
                   <label>Vehicle type:
                     <select  name="vtype" class="form-control input-sm">
                       <option value="car">car</option>
@@ -53,7 +53,7 @@
                   <label>Vehicle color:
                     <input type="text" name="color"
                              class="form-control input-sm">
-                  </label><br>
+                  </label><br> -->
               </div>
               <input type="submit" value="Submit"
                      class="btn btn-danger">
@@ -65,7 +65,7 @@
 <script>
 $(document).ready(function(){
   var now=new Date();
-  $('#event_date').val(new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().substring(0,19));
+  $('#event_date').val(new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().substring(0,16));
 });
 </script>
 
