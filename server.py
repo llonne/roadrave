@@ -273,7 +273,8 @@ def post_edit_form(post_id):
         # raise Exception("No user logged in.")
 
     user_post = Post.query.filter_by(post_id=post_id, user_id=user_id).first()
-    user_post.event_date = user_post.event_date.strftime('%Y-%m-%d')
+    # user_post.event_date = user_post.event_date.strftime('%Y-%m-%d %I:%M %P')
+    user_post.event_date = user_post.event_date.strftime('%Y-%m-%dT%H:%M')
 
     # vehicle = Vehicle.query.filter_by(vehicle_plate=user_post.vehicle_plate).first()
 

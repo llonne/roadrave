@@ -8,7 +8,7 @@
           <form action="/posts/edit/{{ user_post.post_id }}" method="POST">
               <div class="form-group">
                   <label>Event Date:
-                    <input type="date" name="event_date"
+                    <input type="datetime-local" id="event_date" name="event_date"
                              class="form-control input-sm"
                              value="{{ user_post.event_date }}">
                   </label><br>
@@ -60,7 +60,5 @@
           </form>
         {% endif %}
       {% endif %}
-
     </div>
-
 {% endblock %}
