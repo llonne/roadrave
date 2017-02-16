@@ -2,11 +2,14 @@
 {% block content %}
 
     <div class="well spaced" style="width:97%;">
-        <h2>All Posts...</h2>
+        <h2>All Posts:</h2>
         <!-- TODO: search box for searching vehicle plates -->
-            <p>
-                <a href="/posts/add">Click here to add a post!</a>
-            </p>
+        {% if 'user_id' in session %}
+          <p><a href="/posts/add">Click here to add a post...</a></p>
+        {% else %}
+          <p><a href="/login">Login to add a post...</a></p>
+        {% endif %}
+
         <ul>
             {% if posts %}
                 <!-- TODO: make columns sortable -->
