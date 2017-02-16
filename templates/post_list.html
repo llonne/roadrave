@@ -2,10 +2,14 @@
 {% block content %}
 
     <div class="well spaced" style="width:97%;">
-        <h2>Posts</h2>
+        <h2>All Posts...</h2>
+        <!-- TODO: search box for searching vehicle plates -->
+            <p>
+                <a href="/posts/add">Click here to add a post!</a>
+            </p>
         <ul>
             {% if posts %}
-                <!-- <table cellspacing="20" cellpadding="20"> -->
+                <!-- TODO: make columns sortable -->
                     <table class='table'>
                     <thead>
                         <tr>
@@ -19,6 +23,7 @@
                 {% for post in posts %}
                         <tr>
                             <td>{{ post.event_date }}</td>
+                            <!-- TODO: make plate a link to all posts for that plate -->
                             <td>{{ post.vehicle_plate }}</td>
                             <td>{{ post.ptype }}</td>
                             <td>{{ post.location }}</td>
@@ -30,8 +35,5 @@
                 <p>No posts yet.</p>
             {% endif %}
         </ul>
-        <p>
-            <a href="/posts/add">Add a post.</a>
-        </p>
     </div>
 {% endblock %}

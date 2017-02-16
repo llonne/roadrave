@@ -7,35 +7,40 @@
           <p id="formInstructions">Fields marked with an asterisk (*) are required.</p>
           <form action="/posts/add" method="POST">
               <div class="form-group">
-                  <label>Event Date*:
-                    <input type="datetime-local" name="event_date" required='true'
+                  <label>* Event Date:
+                    <input type="datetime-local" id="event_date" name="event_date" required='true'
                              class="form-control input-sm">
                   </label><br>
                   <!-- TODO: add google location services and address search -->
-                  <label>Location*:
+                  <label>* Location:
                     <input type="text" name="location" required='true'
                              class="form-control input-sm">
                   </label><br>
-                  <label>Post type*:
+                  <label>* Post type:
                     <select  name="ptype" required='true' class="form-control input-sm">
                       <option value="compliment">compliment</option>
                       <option value="comment">comment</option>
                       <option value="criticism">criticism</option>
                     </select>
                   </label><br>
-                  <!-- TODO: add character limit -->
-                  <label>Post message*:
+                  <label>* Post subject (140 characters max):
                     <input type="text" name="subject" maxlength='140' required='true'
                              class="form-control input-sm">
                   </label><br>
                   <!-- TODO: add search for existing vehicle plates -->
-                  <label>Vehicle plate*:
+                  <label>* Vehicle plate:
                     <input type="text" name="vehicle_plate" required='true'
                              class="form-control input-sm">
                   </label><br>
-                  <label>Vehicle type (car, truck, MC):
-                    <input type="text" name="vtype"
-                             class="form-control input-sm">
+                  <label>Vehicle type:
+                    <select  name="vtype" class="form-control input-sm">
+                      <option value="car">car</option>
+                      <option value="truck">truck</option>
+                      <option value="motorcycle">motorcycle</option>
+                      <option value="semi">semi</option>
+                      <option value="RV">RV</option>
+                      <option value="Other">Other</option>
+                    </select>
                   </label><br>
                   <label>Vehicle make:
                     <input type="text" name="make"
@@ -56,5 +61,12 @@
       {% endif %}
 
     </div>
+<script src="https://code.jquery.com/jquery.js"></script>
+<script>
+$(document).ready(function(){
+  var now=new Date();
+  $('#event_date').val(new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().substring(0,19));
+});
+</script>
 
 {% endblock %}
