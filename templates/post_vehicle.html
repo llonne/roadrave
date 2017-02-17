@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<!-- TODO: integrate post_list and post_vehicle, and change routes and title accordingly. -->
+
     <div class="well spaced" style="width:97%;">
         <h2>Posts:</h2>
         <!-- TODO: search box for searching vehicle plates -->
@@ -25,7 +25,6 @@
                     </thead>
                 {% for post in posts %}
                         <tr>
-                            <!-- TODO: add username field that links to posts by user -->
                             <td>{{ post.event_date }}</td>
                             <!-- TODO: make plate a link to all posts for that plate -->
                             <td><a href="/posts/vehicle/{{ post.vehicle_plate }}">{{ post.vehicle_plate }}</a></td>

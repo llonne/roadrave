@@ -310,7 +310,8 @@ def post_edit(post_id):
     location = request.form["location"]
 
     # TODO: iterate through form variables to eliminate blanks
-
+    # TODO: add ability to delete posts
+    # TODO: fix ability to edit vehicle_plate
     post = Post.query.filter_by(post_id=post_id, user_id=user_id).first()
 
     if post:
@@ -328,6 +329,17 @@ def post_edit(post_id):
     db.session.commit()
 
     return redirect("/posts/detail/%s" % post_id)
+
+
+@app.route("/posts/vehicle/<vehicle_plate>", methods=['GET'])
+def posts_by_vehicle(vehicle_plate):
+    """Show posts for a vehicle."""
+
+    posts = Post.query.filter_by(vehicle_plate=vehicle_plate).order_by(Post.event_date.desc()).all()
+    for post in posts:
+        post.event_date = post.event_date.strftime('%m/%d/%Y %I:%M %P')
+
+    return render_template("post_vehicle.html", posts=posts)
 
 
 if __name__ == "__main__":

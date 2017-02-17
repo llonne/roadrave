@@ -12,6 +12,11 @@
                     <input type="datetime-local" id="event_date" name="event_date" required='true'
                              class="form-control input-sm">
                   </label><br>
+                  <!-- TODO: add search for existing vehicle plates -->
+                  <label>* Vehicle plate (7 characters including spaces, 0-9, A-Z):
+                    <input type="text" name="vehicle_plate" maxlength="7" minlength="7" required='true'
+                             class="form-control input-sm" pattern="[a-zA-Z0-9\s]+" style="text-transform: uppercase;">
+                  </label><br>
                   <!-- TODO: add google location services and address search -->
                   <label>* Location:
                     <input type="text" name="location" required='true'
@@ -24,15 +29,11 @@
                       <option value="criticism">criticism</option>
                     </select>
                   </label><br>
-                  <label>* Post subject (140 characters max):
-                    <input type="text" name="subject" maxlength='140' required='true'
+                  <label>* Post subject (64 characters max):
+                    <input type="text" name="subject" maxlength='64' required='true'
                              class="form-control input-sm">
                   </label><br>
-                  <!-- TODO: add search for existing vehicle plates -->
-                  <label>* Vehicle plate (7 characters including spaces, 0-9, A-Z):
-                    <input type="text" name="vehicle_plate" maxlength="7" minlength="7" required='true'
-                             class="form-control input-sm" pattern="[a-zA-Z0-9\s]+" style="text-transform: uppercase;">
-                  </label><br><!-- 
+<!-- 
                   <label>Vehicle type:
                     <select  name="vtype" class="form-control input-sm">
                       <option value="car">car</option>
