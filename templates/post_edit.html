@@ -17,10 +17,12 @@
                              class="form-control input-sm"
                              value="{{ user_post.location }}">
                   </label><br>
-                  <label>Post type (comment, compliment, criticism):
-                    <input type="text" name="ptype"
-                             class="form-control input-sm"
-                             value="{{ user_post.ptype }}">
+                  <label>* Post type:
+                    <select  name="ptype" id="ptype" required='true' class="form-control input-sm">
+                      <option value="compliment">compliment</option>
+                      <option value="comment">comment</option>
+                      <option value="criticism">criticism</option>
+                    </select>
                   </label><br>
                   <label>Post message:
                     <input type="text" name="subject"
@@ -60,5 +62,13 @@
           </form>
         {% endif %}
       {% endif %}
+
     </div>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script>
+  $(function() {
+    var temp="{{ user_post.ptype }}"; 
+    $("#ptype").val(temp);
+  });
+</script>
 {% endblock %}
