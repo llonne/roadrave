@@ -104,7 +104,7 @@ def logout():
 def show_user_detail(user_id):
     """Show info about user."""
 
-    user_id = session.get("user_id")
+    # user_id = session.get("user_id")
 
     # TODO: add security to redirct to login if no user session
     # TODO: check for userid and add to return if exists
@@ -116,7 +116,7 @@ def show_user_detail(user_id):
 def show_user_profile_for_edit(user_id):
     """Show info about user for editing."""
 
-    user_id = session.get("user_id")
+    # user_id = session.get("user_id")
     # TODO: add security to redirct to login if no user session
     # TODO: check for userid and add to return if exists
     user = User.query.get(user_id)
@@ -128,7 +128,7 @@ def show_user_profile_for_edit(user_id):
 def edit_user_detail(user_id):
     """Edit info about user."""
 
-    user_id = session.get("user_id")
+    # user_id = session.get("user_id")
 
     if not user_id:
         flash("Please log in to access posts.")
@@ -182,7 +182,7 @@ def posts_list():
 def user_posts_list(user_id):
     """Show list of all posts by specified user."""
 
-    user_id = session.get("user_id")
+    # user_id = session.get("user_id")
 
     if user_id:
         posts = Post.query.filter_by(user_id=user_id).all()
@@ -244,6 +244,7 @@ def post_add():
     subject = request.form["subject"]
     location = request.form["location"]
     vehicle_plate = request.form["vehicle_plate"]
+    vehicle_plate = vehicle_plate.upper()
     # vtype = request.form["vtype"]
     # make = request.form["make"]
     # model = request.form["model"]

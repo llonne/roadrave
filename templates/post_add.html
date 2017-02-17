@@ -29,9 +29,9 @@
                              class="form-control input-sm">
                   </label><br>
                   <!-- TODO: add search for existing vehicle plates -->
-                  <label>* Vehicle plate:
-                    <input type="text" name="vehicle_plate" required='true'
-                             class="form-control input-sm">
+                  <label>* Vehicle plate (7 characters including spaces, 0-9, A-Z):
+                    <input type="text" name="vehicle_plate" maxlength="7" minlength="7" required='true'
+                             class="form-control input-sm" pattern="[a-zA-Z0-9\s]+" style="text-transform: uppercase;">
                   </label><br><!-- 
                   <label>Vehicle type:
                     <select  name="vtype" class="form-control input-sm">
