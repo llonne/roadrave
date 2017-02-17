@@ -203,6 +203,7 @@ def post_detail(post_id):
     # if user_id:
     user_post = Post.query.filter_by(
         post_id=post_id).first()
+    user_post.event_date = user_post.event_date.strftime('%m/%d/%Y %I:%M %P')
     # print user_post
     # TODO: <Roadrate post_id=2 user_id=2 vehicle_plate=plate2 event_date=2017-01-01 00:00:00 ptype=ptype2 location=location2 subject=subj2>
     # else:
