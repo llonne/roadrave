@@ -119,6 +119,7 @@ def show_user_profile_for_edit(user_id):
     # TODO: add security to redirct to login if no user session
     # TODO: check for userid and add to return if exists
     user = User.query.get(user_id)
+
     return render_template("profile_edit.html", email=user.email, username=user.username)
 
 
@@ -148,7 +149,8 @@ def edit_user_detail(user_id):
 
     if user:
         user.email = email
-        user.password = new_pwd
+        if (new_pwd):
+            user.password = new_pwd
         user.username = username
         flash("Profile updated.")
     else:
@@ -169,6 +171,8 @@ def posts_list():
     """Show list of all posts for all users."""
 
     posts = Post.query.order_by(Post.event_date.desc()).all()
+    for post in posts:
+        post.event_date = post.event_date.strftime('%m/%d/%Y %I:%M %P')
 
     return render_template("post_list.html", posts=posts)
 
@@ -181,6 +185,8 @@ def user_posts_list(user_id):
 
     if user_id:
         posts = Post.query.filter_by(user_id=user_id).all()
+        for post in posts:
+            post.event_date = post.event_date.strftime('%m/%d/%Y %I:%M %P')
     else:
         flash("Please log in to access posts.")
         return redirect("/login")
@@ -258,7 +264,7 @@ def post_add():
     db.session.commit()
     flash("Post added.")
 
-    return redirect("/posts")
+    return redirect("/posts/detail/%s" % post.post_id)
 
 
 @app.route("/posts/edit/<int:post_id>", methods=['GET'])
@@ -318,7 +324,7 @@ def post_edit(post_id):
 
     db.session.commit()
 
-    return redirect("/posts/%s" % post_id)
+    return redirect("/posts/detail/%s" % post_id)
 
 
 if __name__ == "__main__":
