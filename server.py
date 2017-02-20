@@ -173,6 +173,9 @@ def posts_list():
     posts = Post.query.order_by(Post.event_date.desc()).all()
     for post in posts:
         post.event_date = post.event_date.strftime('%m/%d/%Y %I:%M %P')
+        user = User.query.filter_by(user_id=post.user_id).first()
+        post.username = user.username
+    # TODO: add username to posts db so we do not double query?
 
     return render_template("post_list.html", posts=posts)
 
