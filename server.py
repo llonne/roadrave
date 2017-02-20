@@ -21,8 +21,7 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """Homepage."""
 
-    # return render_template("homepage.html")
-    return redirect("/posts")
+    return render_template("homepage.html")
 
 
 @app.route('/register', methods=['GET'])
