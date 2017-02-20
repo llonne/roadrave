@@ -190,6 +190,8 @@ def user_posts_list(user_id):
         posts = Post.query.filter_by(user_id=user_id).all()
         for post in posts:
             post.event_date = post.event_date.strftime('%m/%d/%Y %I:%M %P')
+            user = User.query.filter_by(user_id=post.user_id).first()
+            post.username = user.username
     else:
         flash("Please log in to access posts.")
         return redirect("/login")
@@ -207,6 +209,8 @@ def post_detail(post_id):
     user_post = Post.query.filter_by(
         post_id=post_id).first()
     user_post.event_date = user_post.event_date.strftime('%m/%d/%Y %I:%M %P')
+    user = User.query.filter_by(user_id=user_post.user_id).first()
+    user_post.username = user.username
     # print user_post
     # TODO: <Roadrate post_id=2 user_id=2 vehicle_plate=plate2 event_date=2017-01-01 00:00:00 ptype=ptype2 location=location2 subject=subj2>
     # else:

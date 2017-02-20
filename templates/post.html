@@ -3,7 +3,9 @@
     <div class="well spaced" style="width:97%;">
           <h2>Post Details:</h2>
         {% if user_post %}
+        <!-- TODO: add links to user, plate, subject? -->
           <p>Post Event Date: {{ user_post.event_date }}</p>
+          <p>Posted By: {{ user_post.username }}</p>
           <p>Post Type: {{ user_post.ptype }}</p>
           <p>Post Subject: {{ user_post.subject }}</p>
           <p>Post Plate: {{ user_post.vehicle_plate }}</p>
