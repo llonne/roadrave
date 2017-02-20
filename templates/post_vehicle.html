@@ -16,16 +16,18 @@
                     <table class='table'>
                     <thead>
                         <tr>
-                            <td>Date</td>
-                            <td>Plate</td>
-                            <td>Type</td>
-                            <td>Location</td>
-                            <td>Subject</td>
+                            <td>Event Date</td>
+                            <td>Posted By</td>
+                            <td>Vehicle Plate</td>
+                            <td>Post Type</td>
+                            <td>Event Location</td>
+                            <td>Post Topic</td>
                         </tr>
                     </thead>
                 {% for post in posts %}
                         <tr>
                             <td>{{ post.event_date }}</td>
+                            <td>{{ post.username }}</td>
                             <!-- TODO: make plate a link to all posts for that plate -->
                             <td><a href="/posts/vehicle/{{ post.vehicle_plate }}">{{ post.vehicle_plate }}</a></td>
                             <td>{{ post.ptype }}</td>

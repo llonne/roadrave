@@ -344,6 +344,8 @@ def posts_by_vehicle(vehicle_plate):
     posts = Post.query.filter_by(vehicle_plate=vehicle_plate).order_by(Post.event_date.desc()).all()
     for post in posts:
         post.event_date = post.event_date.strftime('%m/%d/%Y %I:%M %P')
+        user = User.query.filter_by(user_id=post.user_id).first()
+        post.username = user.username
 
     return render_template("post_vehicle.html", posts=posts)
 
