@@ -13,15 +13,15 @@
         <ul>
             {% if posts %}
                 <!-- TODO: make columns sortable -->
-                    <table class='table'>
+                    <table class='table table-bordered'>   
                     <thead>
                         <tr>
-                            <td>Event Date</td>
-                            <td>Posted By</td>
-                            <td>Vehicle Plate</td>
-                            <td>Post Type</td>
-                            <td>Event Location</td>
-                            <td>Post Topic</td>
+                            <th>Event Date</th>
+                            <th>Posted By</th>
+                            <th>Vehicle Plate</th>
+                            <th>Post Type</th>
+                            <th>Event Location</th>
+                            <th>Post Topic</th>
                         </tr>
                     </thead>
                 {% for post in posts %}
