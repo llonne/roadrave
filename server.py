@@ -260,13 +260,14 @@ def post_add():
 
     # TODO: iterate through form variables to verify data formats
     # TODO: check if vehicle exists in DB, present user with choice, allow modification
-    # vehicle_check = Vehicle.query.filter_by(vehicle_plate=vehicle_plate).first()
+    vehicle_check = Vehicle.query.filter_by(vehicle_plate=vehicle_plate).first()
 
     # vehicle must exist in db before post can be added
     # vehicle = Vehicle(vehicle_plate=vehicle_plate, vtype=vtype, make=make, model=model, color=color)
-    vehicle = Vehicle(vehicle_plate=vehicle_plate)
-    db.session.add(vehicle)
-    db.session.commit()
+    if not (vehicle_check):
+        vehicle = Vehicle(vehicle_plate=vehicle_plate)
+        db.session.add(vehicle)
+        db.session.commit()
 
     post = Post(event_date=event_date, ptype=ptype, subject=subject, vehicle_plate=vehicle_plate, location=location, user_id=user_id)
     db.session.add(post)
