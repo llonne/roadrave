@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="well spaced" style="width:97%;">
+          <h2>Find Post</h2>
+          <form action="/posts/search" method="POST">
+              <div class="form-group">
+                <!-- TODO: restrict time entry to not future. -->
+                  <label>* Event Date:
+                    <input type="datetime-local" id="event_date" name="event_date"
+                             class="form-control input-sm">
+                  </label><br>
+                  <label>* Vehicle plate (7 characters including spaces, 0-9, A-Z):
+                    <input type="text" name="vehicle_plate" maxlength="7" minlength="7"
+                             class="form-control input-sm" pattern="[a-zA-Z0-9\s]+" style="text-transform: uppercase;">
+                  </label><br>
+                  <!-- TODO: add google location services and address search -->
+                  <label>* Location:
+                    <input type="text" name="location"
+                             class="form-control input-sm">
+                  </label><br>
+                  <label>* Post type:
+                    <select  name="ptype" class="form-control input-sm">
+                      <option value=""></option>
+                      <option value="compliment">compliment</option>
+                      <option value="comment">comment</option>
+                      <option value="criticism">criticism</option>
+                    </select>
+                  </label><br>
+                  <label>* Post subject (64 characters max):
+                    <input type="text" name="subject" maxlength='64'
+                             class="form-control input-sm">
+                  </label><br>
+<!-- 
+                  <label>Vehicle type:
+                    <select  name="vtype" class="form-control input-sm">
+                      <option value="car">car</option>
+                      <option value="truck">truck</option>
+                      <option value="motorcycle">motorcycle</option>
+                      <option value="semi">semi</option>
+                      <option value="RV">RV</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </label><br>
+                  <label>Vehicle make:
+                    <input type="text" name="make"
+                             class="form-control input-sm">
+                  </label><br>
+                  <label>Vehicle model:
+                    <input type="text" name="model"
+                             class="form-control input-sm">
+                  </label><br>
+                  <label>Vehicle color:
+                    <input type="text" name="color"
+                             class="form-control input-sm">
+                  </label><br> -->
+              </div>
+              <input type="submit" value="Search"
+                     class="btn btn-danger">
+          </form>
+    </div>
+{% endblock %}

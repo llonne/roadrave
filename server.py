@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, User, Post, Vehicle
+from sqlalchemy.sql import and_
 
 app = Flask(__name__)
 
@@ -349,6 +350,70 @@ def posts_by_vehicle(vehicle_plate):
         post.username = user.username
 
     return render_template("post_vehicle.html", posts=posts)
+
+
+@app.route("/posts/search", methods=['GET'])
+def post_search_form():
+    """Form to search for posts."""
+
+    return render_template("post_search.html")
+
+
+@app.route("/posts/search", methods=['POST'])
+def post_search():
+    """Search for posts."""
+
+    terms = []
+
+    # Get form variables and store for query
+    event_date = request.form["event_date"]
+    ptype = request.form["ptype"]
+    subject = request.form["subject"]
+    location = request.form["location"]
+    vehicle_plate = request.form["vehicle_plate"]
+    # vtype = request.form["vtype"]
+    # make = request.form["make"]
+    # model = request.form["model"]
+    # color = request.form["color"]
+
+    # if items added to search form, store in query format
+    if (event_date):
+        event_date = "event_date='%" + event_date + "%'"
+        terms.append(event_date)
+    if (ptype):
+        ptype = "posts.ptype.like('%" + ptype + "%')"
+        terms.append(ptype)
+    if (subject):
+        subject = "Post.subject.like('%" + subject + "%')"
+        terms.append(subject)
+    if (location):
+        location = "Post.location.like('%" + location + "%')"
+        terms.append(location)
+    if (vehicle_plate):
+        vehicle_plate = vehicle_plate.upper()
+        vehicle_plate = "posts.vehicle_plate.like('%" + vehicle_plate + "%')"
+        terms.append(vehicle_plate)
+
+    print and_(*terms)
+    # posts = Post.query.filter(and_(*terms)).all()
+    # posts = Post.query.join(Post.vehicle).filter(and_(*terms)).all()
+    posts = db.session.query(Post).join(Post.vehicle).filter(and_(*terms)).all()
+
+    print posts
+    for post in posts:
+        post.event_date = post.event_date.strftime('%m/%d/%Y %I:%M %P')
+        user = User.query.filter_by(user_id=post.user_id).first()
+        post.username = user.username
+
+    # return redirect("/posts/search/result")
+    return render_template("post_search_result.html", posts=posts)
+
+
+# @app.route("/posts/search/result", methods=['GET'])
+# def post_search_result():
+#     """Result search for posts."""
+
+#     return render_template("post_search_result.html")
 
 
 if __name__ == "__main__":
