@@ -364,6 +364,7 @@ def post_search():
     """Search for posts."""
 
     terms = []
+    # terms = ""
 
     # Get form variables and store for query
     event_date = request.form["event_date"]
@@ -378,28 +379,30 @@ def post_search():
 
     # if items added to search form, store in query format
     if (event_date):
-        event_date = "event_date='%" + event_date + "%'"
+        event_date = "(Post.event_date.like='%" + event_date + "%')"
         terms.append(event_date)
+
     if (ptype):
-        ptype = "posts.ptype.like('%" + ptype + "%')"
+        ptype = "(Post.ptype.like('%" + ptype + "%'))"
         terms.append(ptype)
+
     if (subject):
-        subject = "Post.subject.like('%" + subject + "%')"
+        subject = "(Post.subject.like('%" + subject + "%'))"
         terms.append(subject)
+
     if (location):
-        location = "Post.location.like('%" + location + "%')"
+        location = "(Post.location.like('%" + location + "%'))"
         terms.append(location)
+
     if (vehicle_plate):
         vehicle_plate = vehicle_plate.upper()
-        vehicle_plate = "posts.vehicle_plate.like('%" + vehicle_plate + "%')"
+        vehicle_plate = "(Post.vehicle_plate.like('%" + vehicle_plate + "%'))"
         terms.append(vehicle_plate)
 
-    print and_(*terms)
-    # posts = Post.query.filter(and_(*terms)).all()
-    # posts = Post.query.join(Post.vehicle).filter(and_(*terms)).all()
-    posts = db.session.query(Post).join(Post.vehicle).filter(and_(*terms)).all()
+    # terms is the list of filters
+    term_filter = eval('and_(%s)' % ','.join(terms))
+    posts = Post.query.filter(term_filter)
 
-    print posts
     for post in posts:
         post.event_date = post.event_date.strftime('%m/%d/%Y %I:%M %P')
         user = User.query.filter_by(user_id=post.user_id).first()
@@ -407,13 +410,6 @@ def post_search():
 
     # return redirect("/posts/search/result")
     return render_template("post_search_result.html", posts=posts)
-
-
-# @app.route("/posts/search/result", methods=['GET'])
-# def post_search_result():
-#     """Result search for posts."""
-
-#     return render_template("post_search_result.html")
 
 
 if __name__ == "__main__":
