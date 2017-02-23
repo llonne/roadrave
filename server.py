@@ -6,9 +6,9 @@ from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, User, Post, Vehicle
-from sqlalchemy.sql import and_
-from sqlalchemy import Date, cast
-from datetime import date, datetime
+# from sqlalchemy.sql import and_
+# from sqlalchemy import Date, cast
+# from datetime import date, datetime
 
 app = Flask(__name__)
 
