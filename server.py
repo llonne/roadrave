@@ -7,6 +7,8 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, User, Post, Vehicle
 from sqlalchemy.sql import and_
+from sqlalchemy import Date, cast
+from datetime import date, datetime
 
 app = Flask(__name__)
 
@@ -207,8 +209,7 @@ def post_detail(post_id):
     # user_id = session.get("user_id")
 
     # if user_id:
-    user_post = Post.query.filter_by(
-        post_id=post_id).first()
+    user_post = Post.query.filter_by(post_id=post_id).first()
     user_post.event_date = user_post.event_date.strftime('%m/%d/%Y %I:%M %P')
     user = User.query.filter_by(user_id=user_post.user_id).first()
     user_post.username = user.username
@@ -367,7 +368,7 @@ def post_search():
     # terms = ""
 
     # Get form variables and store for query
-    event_date = request.form["event_date"]
+    # event_date = request.form["event_date"]
     ptype = request.form["ptype"]
     subject = request.form["subject"]
     location = request.form["location"]
@@ -378,9 +379,22 @@ def post_search():
     # color = request.form["color"]
 
     # if items added to search form, store in query format
-    if (event_date):
-        event_date = "(Post.event_date.like='%" + event_date + "%')"
-        terms.append(event_date)
+    # TODO: fix issues searching db for datetime
+    # if (event_date):
+    #     event_date = str(event_date)
+    #     event_date = event_date[:10]
+    #     print event_date
+    #     event_date = datetime.strptime(event_date, "%Y-%m-%d")
+    #     print event_date
+    #     # event_date = datetime.strptime(event_date, "%Y-%m-%dT%H:%M")
+    #     event_date = str(event_date)
+    #     event_date = event_date[:10]
+    #     print event_date
+    #     event_date = "(Post.event_date.like('%" + event_date + "%'))"
+    #     # event_date = "(Post.event_date.like('%(cast(" + event_date + ", Date)%'))"
+    #     # event_date = "(Post.event_date.like('%(cast(" + event_date + ", Date))%'))"
+    #     print event_date
+    #     terms.append(event_date)
 
     if (ptype):
         ptype = "(Post.ptype.like('%" + ptype + "%'))"

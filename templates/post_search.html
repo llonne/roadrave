@@ -2,16 +2,17 @@
 {% block content %}
 
 <div class="well spaced" style="width:97%;">
-          <h2>Find Post</h2>
+          <h2>Search Posts</h2>
           <form action="/posts/search" method="POST">
               <div class="form-group">
                 <!-- TODO: restrict time entry to not future. -->
-                  <label>* Event Date:
+                <!-- TODO: Fix isuues with date and time format search. -->
+<!--                   <label>* Event Date:
                     <input type="datetime-local" id="event_date" name="event_date"
                              class="form-control input-sm">
-                  </label><br>
+                  </label><br> -->
                   <label>* Vehicle plate (7 characters including spaces, 0-9, A-Z):
-                    <input type="text" name="vehicle_plate" maxlength="7" minlength="7"
+                    <input type="text" name="vehicle_plate" maxlength="7" 
                              class="form-control input-sm" pattern="[a-zA-Z0-9\s]+" style="text-transform: uppercase;">
                   </label><br>
                   <!-- TODO: add google location services and address search -->
