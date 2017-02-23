@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+<link rel="stylesheet" type="text/css" href="static/css/datatable.css">
 <!-- TODO: integrate post_list and post_vehicle, and change routes and title accordingly. -->
     <div class="well spaced" style="width:97%;">
         <h2>Posts:</h2>
@@ -14,7 +15,7 @@
             {% if posts %}
                 <!-- TODO: make columns sortable -->
                 <div class="table-responsive">
-                    <table class='table table-bordered'>   
+                    <table class='table table-bordered' id="posts_table" style="background-color:black">   
                     <thead>
                         <tr>
                             <th>Event Date</th>
@@ -44,4 +45,12 @@
             {% endif %}
         </ul>
     </div>
+    <script>
+        // $(document).ready( function () {
+            $('#posts_table').DataTable();
+            // change text to white in bootstrap theme
+            // $('#posts_table').css('background-color', 'black');
+            // $(nTd).children('td').css('background-color', 'black');
+        // } );
+    </script>
 {% endblock %}
