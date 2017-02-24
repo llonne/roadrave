@@ -43,8 +43,10 @@ def register_process():
     """Process registration."""
 
     # Get form variables
+    # TODO: check if fields are null
     email = request.form["email"]
     username = request.form["username"]
+    # TODO: check if username exists in db already
     passwd = request.form["password"]
     hashed = hash(passwd)
     del passwd
@@ -86,7 +88,7 @@ def login_process():
         flash("Missing password. Please try again.")
         return redirect("/login")
     else:
-        hashed = argon2.hash(passwd)
+        hashed = hash(passwd)
         del passwd
         user = User.query.filter_by(email=email, password=hashed).first()
 
@@ -95,7 +97,8 @@ def login_process():
         return redirect("/login")
     else:
         session["user_id"] = user.user_id
-        flash("Logged in")
+        # TODO: add username or email to flash message.
+        flash("Logged in successfully.")
         return redirect("/profile/%s" % user.user_id)
 
 
@@ -274,7 +277,7 @@ def post_add():
     # vehicle must exist in db before post can be added
     # vehicle = Vehicle(vehicle_plate=vehicle_plate, vtype=vtype, make=make, model=model, color=color)
     if not (vehicle_check):
-        vehicle = Vehicle(vehicle_plate=vehicle_plate)
+        vehicle = Vehicle(vehicle_plate=vehicle_plate, user_id_adder=user_id)
         db.session.add(vehicle)
         db.session.commit()
 

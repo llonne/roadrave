@@ -31,7 +31,7 @@ class User(db.Model):
     email = db.Column(db.String(64), nullable=False)
     # TODO: secure pwd and add min requirements
     password = db.Column(db.BigInteger, nullable=False)
-    username = db.Column(db.String(64))  # default auto-generate?
+    username = db.Column(db.String(64), nullable=False)
     date_user_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     vehicles = relationship("UserVehicle", back_populates="user")
@@ -48,12 +48,12 @@ class UserVehicle(db.Model):  # do we need this once users claim vehicles?
     __tablename__ = "uservehicles"
 
     # Q: do we need id for association table?
-    # user_vehicle_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), primary_key=True)
-    vehicle_plate = db.Column(db.String(64), db.ForeignKey('vehicles.vehicle_plate'), primary_key=True)
+    # A: (yes, there can be multiple usrs per vehicle, and multiple vehicles per user.)
+    user_vehicle_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    vehicle_plate = db.Column(db.String(64), db.ForeignKey('vehicles.vehicle_plate'))
     date_linked = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
-    # date_unlinked = db.Column(db.DateTime)
-    # user_id_owner = db.Column(db.Integer)  # boolean...optionally allow users to claim ownership of vehicle. add to UserVehicle table?
+    date_unlinked = db.Column(db.DateTime)
 
     # from Association object secion here: http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html
     vehicle = relationship("Vehicle", back_populates="users")
@@ -62,7 +62,7 @@ class UserVehicle(db.Model):  # do we need this once users claim vehicles?
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<UserVehicle user_id=%d vehicle_plate=%d>" % (self.user_id, self.vehicle_plate)
+        return "<UserVehicle user_vehicle_id=%d user_id=%d vehicle_plate=%d>" % (self.user_vehicle_id, self.user_id, self.vehicle_plate)
 
 
 class Vehicle(db.Model):
@@ -70,17 +70,18 @@ class Vehicle(db.Model):
 
     __tablename__ = "vehicles"
 
-    # TODO: decide if phase 1 even allow users to add anything but plate
+    # TODO: Beta version, allow users to add more behicle info, incl pics
     vehicle_plate = db.Column(db.String(64), primary_key=True)  # license plate
-    # TODO: restrict to US plates and 7 chars in program input. Future allow EU and symbols.
+    # TODO: Beta version, add region and country plate formats including symbols.
     vtype = db.Column(db.String(64))  # car, truck, motorcycle, semi, plane, boat, etc.
     # veh_style = db.Column(db.String(64)) # sedan, coupe, flatbed, hazmat, sport, etc.
     make = db.Column(db.String(64))
     model = db.Column(db.String(64))
     color = db.Column(db.String(64))
-    # user_id_adder = db.Column(db.Integer, nullable=False)  # user adding car. how to require userid as default?
+    user_id_adder = db.Column(db.Integer, nullable=False)  # user adding car
     date_veh_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
-    # user_id_owner = db.Column(db.Integer, nullable=False)  # allow owners?
+    # allow owners, but they will be stored in UserVehicles association table, because not required
+    # user_id_owner = db.Column(db.Integer)
 
     # TODO: # Define relationship to user db through UserVehicles
     # user = db.relationship("User",
@@ -101,18 +102,16 @@ class Post(db.Model):
     post_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))  # user posting
     vehicle_plate = db.Column(db.String(64), db.ForeignKey('vehicles.vehicle_plate'))
-    # TODO: change to be vehicle id foreign key? update other pieces of schema...
-    # plate = db.Column(db.String(64))  # postee
-    # TODO: default current, but changeable for post-posting after incident
     event_date = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
-    # TODO: program constrain to: comment, compliment, criticism
     ptype = db.Column(db.String(64), nullable=False)  # set default as comment here?
     # TODO: default get location api, or zip code
-    location = db.Column(db.String(64), nullable=False)
+    location = db.Column(db.String(64), nullable=False)  # zip code for alpha version
+    loc_lat = db.Column(db.Numeric(precision=9, scale=6))
+    loc_log = db.Column(db.Numeric(precision=9, scale=6))
     subject = db.Column(db.String(140), nullable=False)
     date_post_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
-    # date_last_edited = db.Column(db.DateTime)
-    # date_post_removed = db.Column(db.DateTime)
+    date_last_edited = db.Column(db.DateTime)
+    date_post_removed = db.Column(db.DateTime)
 
     # Define relationship to users db
     user = db.relationship("User", backref=db.backref("roadrave", order_by=user_id))
