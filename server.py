@@ -1,5 +1,7 @@
 """Roadrave site allows users to post comments to vehicle license plates."""
 
+# from passlib.hash
+import argon2
 from jinja2 import StrictUndefined
 
 from flask import Flask, render_template, request, flash, redirect, session
@@ -42,18 +44,19 @@ def register_process():
 
     # Get form variables
     email = request.form["email"]
-    password = request.form["password"]
     username = request.form["username"]
+    passwd = request.form["password"]
+    hashed = hash(passwd)
+    del passwd
 
-    new_user = User(email=email, password=password, username=username)
+    new_user = User(email=email, password=hashed, username=username)
 
     # TODO: check if user already exists and redirect to login or reset pwd, pwd hint, etc.
 
     db.session.add(new_user)
     db.session.commit()
 
-    # do we need to get new user from db to get user_id for redirect?
-    user = User.query.filter_by(email=email, password=password).first()
+    user = User.query.filter_by(email=email, password=hashed).first()
 
     session['user_id'] = user.user_id
     flash("User %s added." % email)
@@ -74,22 +77,26 @@ def login_process():
 
     # Get form variables
     email = request.form["email"]
-    password = request.form["password"]
+    passwd = request.form["password"]
 
-    user = User.query.filter_by(email=email).first()
+    if not email:
+        flash("Missing email. Please try again.")
+        return redirect("/login")
+    elif not passwd:
+        flash("Missing password. Please try again.")
+        return redirect("/login")
+    else:
+        hashed = argon2.hash(passwd)
+        del passwd
+        user = User.query.filter_by(email=email, password=hashed).first()
 
     if not user:
-        flash("No such user")
+        flash("Incorrect email or password. Please try again.")
         return redirect("/login")
-
-    if user.password != password:
-        flash("Incorrect password")
-        return redirect("/login")
-
-    session["user_id"] = user.user_id
-
-    flash("Logged in")
-    return redirect("/profile/%s" % user.user_id)
+    else:
+        session["user_id"] = user.user_id
+        flash("Logged in")
+        return redirect("/profile/%s" % user.user_id)
 
 
 @app.route('/logout')
@@ -350,7 +357,7 @@ def posts_by_vehicle(vehicle_plate):
         user = User.query.filter_by(user_id=post.user_id).first()
         post.username = user.username
 
-    return render_template("post_vehicle.html", posts=posts)
+    return render_template("post_list.html", posts=posts)
 
 
 @app.route("/posts/search", methods=['GET'])
