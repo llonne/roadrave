@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% block content %}
-<link rel="stylesheet" type="text/css" href="static/css/datatable.css">
 <!-- TODO: integrate post_list and post_vehicle, and change routes and title accordingly. -->
     <div class="well spaced" style="width:97%;">
         <!-- <h2>Posts:</h2> -->
@@ -28,7 +27,7 @@
                 {% for post in posts %}
                         <tr>
                             <td>{{ post.event_date }}</td>
-                            <td>{{ post.username }}</td>
+                            <td><a href="/posts/{{ post.user_id }}">{{ post.username }}</a></td>
                             <!-- TODO: make one link go to post detail where comments are lisited. -->
                             <td><a href="/posts/vehicle/{{ post.vehicle_plate }}">{{ post.vehicle_plate }}</a></td>
                             <td>{{ post.ptype }}</td>

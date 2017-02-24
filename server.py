@@ -189,15 +189,15 @@ def user_posts_list(user_id):
 
     # user_id = session.get("user_id")
 
-    if user_id:
-        posts = Post.query.filter_by(user_id=user_id).all()
-        for post in posts:
-            post.event_date = post.event_date.strftime('%m/%d/%Y %I:%M %P')
-            user = User.query.filter_by(user_id=post.user_id).first()
-            post.username = user.username
-    else:
-        flash("Please log in to access posts.")
-        return redirect("/login")
+    # if user_id:
+    posts = Post.query.filter_by(user_id=user_id).order_by(Post.event_date.desc()).all()
+    for post in posts:
+        post.event_date = post.event_date.strftime('%m/%d/%Y %I:%M %P')
+        user = User.query.filter_by(user_id=post.user_id).first()
+        post.username = user.username
+    # else:
+    #     flash("Please log in to access posts.")
+    #     return redirect("/login")
 
     return render_template("post_list.html", posts=posts)
 
