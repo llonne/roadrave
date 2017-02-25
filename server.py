@@ -1,16 +1,16 @@
 """Roadrave site allows users to post comments to vehicle license plates."""
 
-# from passlib.hash
-import argon2
+from passlib.hash import argon2
 from jinja2 import StrictUndefined
-
 from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
-
 from model import connect_to_db, db, User, Post, Vehicle
 # from sqlalchemy.sql import and_
 # from sqlalchemy import Date, cast
 # from datetime import date, datetime
+
+# TODO: ? install pycipher 0.5.2
+
 
 app = Flask(__name__)
 
@@ -20,6 +20,9 @@ app.secret_key = "ABC"
 # Normally, if you use an undefined variable in Jinja2, it fails silently.
 # This is horrible. Fix this so that, instead, it raises an error.
 app.jinja_env.undefined = StrictUndefined
+
+# Create instance of argon2 password hasher
+# ph = PasswordHasher()
 
 
 @app.route('/')
@@ -43,26 +46,50 @@ def register_process():
     """Process registration."""
 
     # Get form variables
-    # TODO: check if fields are null
     email = request.form["email"]
     username = request.form["username"]
-    # TODO: check if username exists in db already
     passwd = request.form["password"]
-    hashed = hash(passwd)
+
+    if not email:
+        flash("Missing email. Please try again.")
+        return redirect("/register")
+
+    if not passwd:
+        flash("Missing password. Please try again.")
+        return redirect("/register")
+
+    if not username:
+        flash("Missing username. Please try again.")
+        return redirect("/register")
+
+    # hashed = ph.hash(passwd)
+    hashed = argon2.hash(passwd)
     del passwd
 
+    # TODO: check fields and db without reloading page. Ajax. Keep filled fields.
+    # TODO: if user exists, offer forgot password, pwd hint, etc.
+    existing_uname = User.query.filter_by(username=username).first()
+    if existing_uname:
+        flash("Username already exists. Please try again.")
+        return redirect("/register")
+
+    existing_email = User.query.filter_by(email=email).first()
+    if existing_email:
+        flash("Email already exists. Please try again.")
+        return redirect("/register")
+
+    # Add the new user to the database
     new_user = User(email=email, password=hashed, username=username)
-
-    # TODO: check if user already exists and redirect to login or reset pwd, pwd hint, etc.
-
     db.session.add(new_user)
     db.session.commit()
 
+    # get the newly added user's generated user_id from the database to set session cookie
     user = User.query.filter_by(email=email, password=hashed).first()
 
+    # set session cookie for newly added user
     session['user_id'] = user.user_id
     flash("User %s added." % email)
-    # return redirect("/profile/%s" % new_user.user_id)
+
     return redirect("/profile/%s" % user.user_id)
 
 
@@ -84,22 +111,27 @@ def login_process():
     if not email:
         flash("Missing email. Please try again.")
         return redirect("/login")
-    elif not passwd:
+
+    if not passwd:
         flash("Missing password. Please try again.")
         return redirect("/login")
-    else:
-        hashed = hash(passwd)
-        del passwd
-        user = User.query.filter_by(email=email, password=hashed).first()
+
+    user = User.query.filter_by(email=email).first()
 
     if not user:
-        flash("Incorrect email or password. Please try again.")
+        flash("No user found with that email. Please try again.")
         return redirect("/login")
     else:
-        session["user_id"] = user.user_id
-        # TODO: add username or email to flash message.
-        flash("Logged in successfully.")
-        return redirect("/profile/%s" % user.user_id)
+        hashed = argon2.hash(passwd)
+        del passwd
+        if (argon2.verify(hashed, user.password)):
+            session["user_id"] = user.user_id
+            # TODO: add username or email to flash message.
+            flash("Logged in successfully.")
+            return redirect("/profile/%s" % user.user_id)
+        else:
+            flash("Password does not match.")
+            return redirect("/login")
 
 
 @app.route('/logout')

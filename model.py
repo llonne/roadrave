@@ -28,10 +28,10 @@ class User(db.Model):
 
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     # TODO: add email format check and account verification with email link
-    email = db.Column(db.String(64), nullable=False)
+    email = db.Column(db.String(64), unique=True, nullable=False)
     # TODO: secure pwd and add min requirements
-    password = db.Column(db.BigInteger, nullable=False)
-    username = db.Column(db.String(64), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    username = db.Column(db.String(64), unique=True, nullable=False)
     date_user_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     vehicles = relationship("UserVehicle", back_populates="user")
