@@ -26,6 +26,7 @@ class User(db.Model):
 
     __tablename__ = "users"
 
+    # TODO: start ids at high number?
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     # TODO: add email format check and account verification with email link
     email = db.Column(db.String(64), unique=True, nullable=False)
@@ -137,7 +138,7 @@ class Comment(db.Model):
     comment_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.post_id'))
-    parent = db.Column(db.Integer, nullable=False)
+    parent = db.Column(db.Integer, nullable=False)  # 0 means top comment
     date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
     date_modified = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
     # Either content or fileURL must be present for jquery_comments

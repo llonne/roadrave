@@ -4,32 +4,31 @@
 <div class="well spaced" style="width:97%;">
       {% if "user_id" in session %}
           <h2>Add Post</h2>
-          <p id="formInstructions">Fields marked with an asterisk (*) are required.</p>
+          <p id="formInstructions">* All fields are required.</p>
           <form action="/posts/add" method="POST">
               <div class="form-group">
                 <!-- TODO: restrict time entry to not future. -->
-                  <label>* Event Date:
+                  <label>Event Date:
                     <input type="datetime-local" id="event_date" name="event_date" required='true'
                              class="form-control input-sm">
                   </label><br>
                   <!-- TODO: add search for existing vehicle plates -->
-                  <label>* Vehicle plate (7 characters including spaces, 0-9, A-Z):
+                  <label>Vehicle plate (7 characters including spaces, 0-9, A-Z):
                     <input type="text" name="vehicle_plate" maxlength="7" minlength="7" required='true'
                              class="form-control input-sm" pattern="[a-zA-Z0-9\s]+" style="text-transform: uppercase;">
                   </label><br>
                   <!-- TODO: add google location services and address search -->
-                  <label>* Location:
-                    <input type="text" name="location" required='true'
-                             class="form-control input-sm">
+                  <label>Location (5 digit US zip code):
+                    <input type="text" name="location" maxlength="10" minlength="5" pattern="[0-9]{5}" required='true' class="form-control input-sm">
                   </label><br>
-                  <label>* Post type:
+                  <label>Post type:
                     <select  name="ptype" required='true' class="form-control input-sm">
                       <option value="compliment">compliment</option>
                       <option value="comment">comment</option>
                       <option value="criticism">criticism</option>
                     </select>
                   </label><br>
-                  <label>* Post topic (64 characters max):
+                  <label>Post topic (64 characters max):
                     <input type="text" name="topic" maxlength='64' required='true'
                              class="form-control input-sm">
                   </label><br>
