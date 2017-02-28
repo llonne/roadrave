@@ -2,16 +2,13 @@
 {% block content %}
 <!-- TODO: integrate post_list and post_vehicle, and change routes and title accordingly. -->
     <div class="well spaced" style="width:97%;">
-        <!-- <h2>Posts:</h2> -->
-<!--         {% if 'user_id' in session %}
-          <p><a href="/posts/add">Click here to add a post...</a></p>
+        <h2>Posts:</h2>
+        {% if 'user_id' in session %}
+          <p><a href="/posts/add">Click here to add a new post.</a></p>
         {% else %}
           <p><a href="/login">Login to post, comment, vote...</a></p>
-        {% endif %} -->
-<!-- 
-        <ul> -->
+        {% endif %}
             {% if posts %}
-                <!-- TODO: make columns sortable -->
                 <div class="table-responsive">
                     <table class='table table-bordered' id="posts_table" style:"input {color: black;}">   
                     <thead>
@@ -32,15 +29,19 @@
                             <td><a href="/posts/vehicle/{{ post.vehicle_plate }}">{{ post.vehicle_plate }}</a></td>
                             <td>{{ post.ptype }}</td>
                             <td>{{ post.location }}</td>
-                            <td><a href="/posts/detail/{{ post.post_id }}">{{ post.subject }}</a></td>
+                            <td><a href="/posts/detail/{{ post.post_id }}">{{ post.topic }}</a></td>
                         </tr>
                 {% endfor %}
                 </table>
             </div>
             {% else %}
                 <p>No posts yet.</p>
+<!--                 {% if 'user_id' in session %}
+                  <p><a href="/posts/add">Click here to add a new post.</a></p>
+                {% else %}
+                  <p><a href="/login">Login to add a post.</a></p>
+                {% endif %} -->
             {% endif %}
-<!--         </ul> -->
     </div>
     <script>
         // $(document).ready( function () {

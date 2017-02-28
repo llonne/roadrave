@@ -32,8 +32,13 @@ class User(db.Model):
     # TODO: secure pwd and add min requirements
     password = db.Column(db.String(255), nullable=False)
     username = db.Column(db.String(64), unique=True, nullable=False)
-    date_user_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    date_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    date_modified = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    date_removed = db.Column(db.DateTime)
+    profile_url = db.Column(db.String(255))
+    profile_picture_url = db.Column(db.String(255))
 
+    # Define relationship to Vehicle db through UserVehicle
     vehicles = relationship("UserVehicle", back_populates="user")
 
     def __repr__(self):
@@ -79,13 +84,12 @@ class Vehicle(db.Model):
     model = db.Column(db.String(64))
     color = db.Column(db.String(64))
     user_id_adder = db.Column(db.Integer, nullable=False)  # user adding car
-    date_veh_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    date_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    date_modified = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
     # allow owners, but they will be stored in UserVehicles association table, because not required
     # user_id_owner = db.Column(db.Integer)
 
-    # TODO: # Define relationship to user db through UserVehicles
-    # user = db.relationship("User",
-    #                        backref=db.backref("roadrave", order_by=user_id))
+    # Define relationship to user db through UserVehicles
     users = relationship("UserVehicle", back_populates="vehicle")
 
     def __repr__(self):
@@ -108,10 +112,10 @@ class Post(db.Model):
     location = db.Column(db.String(64), nullable=False)  # zip code for alpha version
     loc_lat = db.Column(db.Numeric(precision=9, scale=6))
     loc_log = db.Column(db.Numeric(precision=9, scale=6))
-    subject = db.Column(db.String(140), nullable=False)
-    date_post_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
-    date_last_edited = db.Column(db.DateTime)
-    date_post_removed = db.Column(db.DateTime)
+    topic = db.Column(db.String(140), nullable=False)
+    date_added = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    date_modified = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    date_removed = db.Column(db.DateTime)
 
     # Define relationship to users db
     user = db.relationship("User", backref=db.backref("roadrave", order_by=user_id))
@@ -122,8 +126,39 @@ class Post(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Roadrate post_id=%s user_id=%s vehicle_plate=%s event_date=%s ptype=%s location=%s subject=%s>" % (
-            self.post_id, self.user_id, self.vehicle_plate, self.event_date, self.ptype, self.location, self.subject)
+        return "<Roadrate post_id=%s user_id=%s vehicle_plate=%s event_date=%s ptype=%s location=%s topic=%s>" % (
+            self.post_id, self.user_id, self.vehicle_plate, self.event_date, self.ptype, self.location, self.topic)
+
+
+class Comment(db.Model):
+    """Comments on a post on rodarave site by a user about vehicle."""
+
+    __tablename__ = "comments"
+    comment_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.post_id'))
+    parent = db.Column(db.Integer, nullable=False)
+    date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    date_modified = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    # Either content or fileURL must be present for jquery_comments
+    content = db.Column(db.String(255), nullable=False)
+    file_url = db.Column(db.String(255))
+    # TODO: allow attachment uploading and add file field in DB
+    pings = db.Column(db.String(255), nullable=False)
+    upvotes = db.Column(db.Integer, nullable=False)
+    date_removed = db.Column(db.DateTime)
+
+    # Define relationship to posts db
+    post = db.relationship("Post", backref=db.backref("roadrave", order_by=post_id))
+
+    # # Define relationship to users db
+    # cuser = db.relationship("User", backref=db.backref("roadrave", order_by=user_id))
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<Roadrate comment_id=%d user_id=%d post_id=%d parent=%d upvotes=%d>" % (
+            self.comment_id, self.user_id, self.post_id, self.parent, self.upvotes)
 
 
 ##############################################################################

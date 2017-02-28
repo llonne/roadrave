@@ -3,11 +3,11 @@
     <div class="well spaced" style="width:97%;">
           <h2>Post Details:</h2>
         {% if user_post %}
-        <!-- TODO: add links to user, plate, subject? -->
+        <!-- TODO: add links to user, plate, topic? -->
           <p>Event Date: {{ user_post.event_date }}</p>
           <p>Posted By: {{ user_post.username }}</p>
           <p>Post Type: {{ user_post.ptype }}</p>
-          <p>Post Topic: {{ user_post.subject }}</p>
+          <p>Post Topic: <a href="/posts/detail/comments/{{ user_post.post_id }}">{{ user_post.topic }}</a></p>
           <p>Vehicle Plate: {{ user_post.vehicle_plate }}</p>
           <p>Event Location: {{ user_post.location }}</p>
           {% if 'user_id' in session %}

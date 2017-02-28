@@ -4,7 +4,7 @@ from passlib.hash import argon2
 from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
-from model import connect_to_db, db, User, Post, Vehicle
+from model import connect_to_db, db, User, Post, Vehicle, Comment
 # from sqlalchemy.sql import and_
 # from sqlalchemy import Date, cast
 # from datetime import date, datetime
@@ -122,9 +122,9 @@ def login_process():
         flash("No user found with that email. Please try again.")
         return redirect("/login")
     else:
-        hashed = argon2.hash(passwd)
-        del passwd
-        if (argon2.verify(hashed, user.password)):
+        # hashed = argon2.hash(passwd)
+        # del passwd
+        if (argon2.verify(passwd, user.password)):
             session["user_id"] = user.user_id
             # TODO: add username or email to flash message.
             flash("Logged in successfully.")
@@ -256,12 +256,42 @@ def post_detail(post_id):
     user = User.query.filter_by(user_id=user_post.user_id).first()
     user_post.username = user.username
     # print user_post
-    # TODO: <Roadrate post_id=2 user_id=2 vehicle_plate=plate2 event_date=2017-01-01 00:00:00 ptype=ptype2 location=location2 subject=subj2>
+    # TODO: <Roadrate post_id=2 user_id=2 vehicle_plate=plate2 event_date=2017-01-01 00:00:00 ptype=ptype2 location=location2 topic=subj2>
     # else:
     #     flash("Please log in to access posts.")
     #     return redirect("/login")
 
     return render_template("post.html", user_post=user_post)
+
+
+@app.route("/posts/detail/comments/<int:post_id>", methods=['GET'])
+def post_detail_comments(post_id):
+    """Show details about a post including comments."""
+
+# TODO: enable upvoting in jquery_comments and modify db model to handle userHasUpvoted data
+# set these vars for jquery_comments...
+
+    user_id = session.get("user_id")
+
+    if user_id:
+        # get post data
+        user_post = Post.query.filter_by(post_id=post_id).first()
+        user_post.event_date = user_post.event_date.strftime('%m/%d/%Y %I:%M %P')
+        user = User.query.filter_by(user_id=user_post.user_id).first()
+        user_post.username = user.username
+        # get comments
+        post_comments = Comment.query.filter_by(post_id=post_id).all()
+        for comment in post_comments:
+            comment.date_created = comment.date_created.strftime('%Y-%m-%d')
+            if (user_id == comment.user_id):
+                post_comments.created_by_current_user = True
+            else:
+                post_comments.created_by_current_user = False
+    else:
+        flash("Please log in to access posts.")
+        return redirect("/login")
+
+    return render_template("post_comments.html", user_post=user_post, post_comments=post_comments)
 
 
 @app.route("/posts/add", methods=['GET'])
@@ -291,7 +321,7 @@ def post_add():
     # Get form variables
     event_date = request.form["event_date"]
     ptype = request.form["ptype"]
-    subject = request.form["subject"]
+    topic = request.form["topic"]
     location = request.form["location"]
     vehicle_plate = request.form["vehicle_plate"]
     vehicle_plate = vehicle_plate.upper()
@@ -313,7 +343,7 @@ def post_add():
         db.session.add(vehicle)
         db.session.commit()
 
-    post = Post(event_date=event_date, ptype=ptype, subject=subject, vehicle_plate=vehicle_plate, location=location, user_id=user_id)
+    post = Post(event_date=event_date, ptype=ptype, topic=topic, vehicle_plate=vehicle_plate, location=location, user_id=user_id)
     db.session.add(post)
     db.session.commit()
     flash("Post added.")
@@ -356,7 +386,7 @@ def post_edit(post_id):
     # Get form variables
     event_date = request.form["event_date"]
     ptype = request.form["ptype"]
-    subject = request.form["subject"]
+    topic = request.form["topic"]
     # vehicle_plate = request.form["vehicle_plate"]
     location = request.form["location"]
 
@@ -368,12 +398,12 @@ def post_edit(post_id):
     if post:
         post.event_date = event_date
         post.ptype = ptype
-        post.subject = subject
+        post.topic = topic
         # post.vehicle_plate = vehicle_plate
         post.location = location
         flash("Post updated.")
     else:
-        # post = Post(event_date=event_date, ptype=ptype, subject=subject, vehicle_plate=vehicle_plate, location=location, user_id=user_id)
+        # post = Post(event_date=event_date, ptype=ptype, topic=topic, vehicle_plate=vehicle_plate, location=location, user_id=user_id)
         flash("Error updating post.")
         # db.session.add(post)
 
@@ -412,7 +442,7 @@ def post_search():
     # Get form variables and store for query
     # event_date = request.form["event_date"]
     ptype = request.form["ptype"]
-    subject = request.form["subject"]
+    topic = request.form["topic"]
     location = request.form["location"]
     vehicle_plate = request.form["vehicle_plate"]
     # vtype = request.form["vtype"]
@@ -442,9 +472,9 @@ def post_search():
         ptype = "(Post.ptype.like('%" + ptype + "%'))"
         terms.append(ptype)
 
-    if (subject):
-        subject = "(Post.subject.like('%" + subject + "%'))"
-        terms.append(subject)
+    if (topic):
+        topic = "(Post.topic.like('%" + topic + "%'))"
+        terms.append(topic)
 
     if (location):
         location = "(Post.location.like('%" + location + "%'))"
