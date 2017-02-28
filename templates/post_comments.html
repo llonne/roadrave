@@ -1,10 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
-<link rel="stylesheet" type="text/css" href="/vendor/viima/jquery-comments/css/jquery-comments.css">
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-<script type="text/javascript" src="/vendor/viima/jquery-comments/js/jquery-comments.js"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" type="text/css" href="/static/css/jquery-comments.css">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+    <!-- Data -->
+    <script type="text/javascript" src="/static/data/comments-data.js"></script>
+
+    <!-- Libraries -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.textcomplete/1.8.0/jquery.textcomplete.js"></script>
+    <script type="text/javascript" src="/static/js/jquery-comments.js"></script>
+
 
     <div class="well spaced" style="width:97%;">
           <h2>Post Details:</h2>
@@ -35,40 +43,99 @@
           <p>No comments yet.</p>
         {% endif %}
     </div>
-<script>
-$('#comments-container').comments({
-    fieldMappings: {
-        id: 'comment_id',
-        parent: 'parent',
-        created: 'date_created',
-        modified: 'date_modified',
-        content: 'content',
-        // file: 'file',  disable option to upload attachments
-        fileURL: 'file_url',
-        // fileMimeType: 'file_mime_type',
-        pings: 'pings',
-        creator: 'user_id',
-        fullname: 'username',
-        profileURL: 'profile_url',
-        // profilePictureURL: 'profile_picture_url',
-        profilePictureURL: 'https://app.viima.com/static/media/user_profiles/user-icon.png',
-        // createdByAdmin: 'created_by_admin',
-        createdByCurrentUser: 'created_by_current_user',
-        upvoteCount: 'upvote_count',
-        userHasUpvoted: 'user_has_upvoted'
-    }
-    getComments: function(success, error) {
-        var commentsArray = [{
-            id: 1,
-            created: '2015-10-01',
-            content: 'Lorem ipsum dolort sit amet',
-            fullname: 'Simon Powell',
-            upvote_count: 2,
-            user_has_upvoted: false
-        }];
-        success(commentsArray);
-    }
+// <script>
+// $('#comments-container').comments({
+//     fieldMappings: {
+//         id: 'comment_id',
+//         parent: 'parent',
+//         created: 'date_created',
+//         modified: 'date_modified',
+//         content: 'content',
+//         // file: 'file',  disable option to upload attachments
+//         fileURL: 'file_url',
+//         // fileMimeType: 'file_mime_type',
+//         pings: 'pings',
+//         creator: 'user_id',
+//         fullname: 'username',
+//         profileURL: 'profile_url',
+//         // profilePictureURL: 'profile_picture_url',
+//         profilePictureURL: 'https://app.viima.com/static/media/user_profiles/user-icon.png',
+//         // createdByAdmin: 'created_by_admin',
+//         createdByCurrentUser: 'created_by_current_user',
+//         upvoteCount: 'upvote_count',
+//         userHasUpvoted: 'user_has_upvoted'
+//     }
+//     getComments: function(success, error) {
+//         var commentsArray = [{
+//             id: 1,
+//             created: '2015-10-01',
+//             content: 'Lorem ipsum dolort sit amet',
+//             fullname: 'Simon Powell',
+//             upvote_count: 2,
+//             user_has_upvoted: false
+//         }];
+//         success(commentsArray);
+//     }
+// });
+// </script>
 
-});
-</script>
+    <!-- Init jquery-comments -->
+    <script type="text/javascript">
+      $(function() {
+        var saveComment = function(data) {
+
+          // Convert pings to human readable format
+          $(data.pings).each(function(index, id) {
+            var user = usersArray.filter(function(user){return user.id == id})[0];
+            data.content = data.content.replace('@' + id, '@' + user.fullname);
+          });
+
+          return data;
+        }
+        $('#comments-container').comments({
+          profilePictureURL: 'https://viima-app.s3.amazonaws.com/media/user_profiles/user-icon.png',
+          currentUserId: 1,
+          roundProfilePictures: true,
+          textareaRows: 1,
+          enableAttachments: true,
+          enableHashtags: true,
+          enablePinging: true,
+          getUsers: function(success, error) {
+            setTimeout(function() {
+              success(usersArray);
+            }, 500);
+          },
+          getComments: function(success, error) {
+            setTimeout(function() {
+              success(commentsArray);
+            }, 500);
+          },
+          postComment: function(data, success, error) {
+            setTimeout(function() {
+              success(saveComment(data));
+            }, 500);
+          },
+          putComment: function(data, success, error) {
+            setTimeout(function() {
+              success(saveComment(data));
+            }, 500);
+          },
+          deleteComment: function(data, success, error) {
+            setTimeout(function() {
+              success();
+            }, 500);
+          },
+          upvoteComment: function(data, success, error) {
+            setTimeout(function() {
+              success(data);
+            }, 500);
+          },
+          uploadAttachments: function(dataArray, success, error) {
+            setTimeout(function() {
+              success(dataArray);
+            }, 500);
+          },
+        });
+      });
+    </script>
 {% endblock %}
