@@ -20,6 +20,9 @@
     <div class="well spaced" style="width:97%;">
           <h2>Post Details:</h2>
         {% if user_post %}
+        <!-- make variable available to javascript for ajax call-->
+          <meta id="user-post" data-user-post="{{user_post}}">
+          <meta id="post-id" data-post="{{user_post.post_id}}">
         <!-- TODO: add links to user, plate, topic? -->
           <p>Event Date: {{ user_post.event_date }}</p>
           <p>Posted By: {{ user_post.username }}</p>
@@ -40,65 +43,11 @@
           <div id="comments-container">
           </div>
         {% if post_comments %}
+        <meta id="comments-all" data-comments-all="{{post_comments}}">
           <div id="comments-container">
           </div>
         {% else %}
           <p>No comments yet.</p>
         {% endif %}
     </div>
-{#
-<!--
-// <script type="text/javascript"> 
-//   var commentsArray = [];
-//   var commentsArrayLength = post_comments.length;
-
-//   for (var i = 0; i < commentsArrayLength; i++) {
-//     commentsArray[i] =
-//     {
-//       id: '{{post_comments[i].user_id}}',
-//       fullname: '{{post_comments[i].username}}',
-//       email: '{{post_comments[i].email}}'
-//     };
-//   }
-//   console.log(commentsArray);
-// </script>
-
-// <script>
-
-// $('#comments-container').comments({
-//     fieldMappings: {
-//         id: 'comment_id',
-//         parent: 'parent',
-//         created: 'date_created',
-//         modified: 'date_modified',
-//         content: 'content',
-//         // file: 'file',  disable option to upload attachments
-//         fileURL: 'file_url',
-//         // fileMimeType: 'file_mime_type',
-//         pings: 'pings',
-//         creator: 'user_id',
-//         fullname: 'username',
-//         profileURL: 'profile_url',
-//         // profilePictureURL: 'profile_picture_url',
-//         profilePictureURL: 'https://app.viima.com/static/media/user_profiles/user-icon.png',
-//         // createdByAdmin: 'created_by_admin',
-//         createdByCurrentUser: 'created_by_current_user',
-//         upvoteCount: 'upvote_count',
-//         userHasUpvoted: 'user_has_upvoted'
-//     }
-//     getComments: function(success, error) {
-//         var commentsArray = [{
-//             id: 1,
-//             created: '2015-10-01',
-//             content: 'Lorem ipsum dolort sit amet',
-//             fullname: 'Simon Powell',
-//             upvote_count: 2,
-//             user_has_upvoted: false
-//         }];
-//         success(commentsArray);
-//     }
-// });
-// </script>
--->
-#}
 {% endblock %}

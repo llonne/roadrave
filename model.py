@@ -134,32 +134,33 @@ class Post(db.Model):
 class Comment(db.Model):
     """Comments on a post on rodarave site by a user about vehicle."""
 
+    # TODO: crate commentPings association table to enable user pings in jquery-comments
+    # TODO: create commentUpvotes assoc table to allow upvoting
+
     __tablename__ = "comments"
-    comment_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    cid = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    comment_id = db.Column(db.String(64), nullable=False)  # used by jquery-comments for position in thread
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.post_id'))
-    parent = db.Column(db.Integer, nullable=False)  # 0 means top comment
+    parent = db.Column(db.String(64), nullable=False)  # null means first comment in thread for jquery-comments
     date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
     date_modified = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
     # Either content or fileURL must be present for jquery_comments
     content = db.Column(db.String(255), nullable=False)
     file_url = db.Column(db.String(255))
     # TODO: allow attachment uploading and add file field in DB
-    pings = db.Column(db.String(255), nullable=False)
+    # pings = db.Column(db.String(255), nullable=False)
     upvotes = db.Column(db.Integer, nullable=False)
     date_removed = db.Column(db.DateTime)
 
     # Define relationship to posts db
     post = db.relationship("Post", backref=db.backref("roadrave", order_by=post_id))
 
-    # # Define relationship to users db
-    # cuser = db.relationship("User", backref=db.backref("roadrave", order_by=user_id))
-
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Roadrate comment_id=%d user_id=%d post_id=%d parent=%d upvotes=%d>" % (
-            self.comment_id, self.user_id, self.post_id, self.parent, self.upvotes)
+        return "<Roadrate cid=%d comment_id=%s user_id=%d post_id=%d parent=%s date_created=%s date_modified=%s content=%s upvotes=%d>" % (
+            self.cid, self.comment_id, self.user_id, self.post_id, self.parent, self.date_created, self.date_modified, self.content, self.upvotes)
 
 
 ##############################################################################

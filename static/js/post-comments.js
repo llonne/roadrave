@@ -1,8 +1,5 @@
 // <!-- Init jquery-comments -->
 
-var usersArray = [];
-var commentsArray = [];
-
 // var usersArray = [
 //    {
 //       id: 1,
@@ -19,19 +16,19 @@ var commentsArray = [];
 // ];
 // var commentsArray = [
 // {
-//    "id": 1,
-//    "parent": null,
-//    "created": "2015-01-01",
-//    "modified": "2015-01-01",
-//    "content": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed posuere interdum sem. Quisque ligula eros ullamcorper quis, lacinia quis facilisis sed sapien. Mauris varius diam vitae arcu.",
-//    "pings": [],
-//    "creator": 6,
-//    "fullname": "Simon Powell",
-//    "profile_picture_url": "https://app.viima.com/static/media/user_profiles/user-icon.png",
-//    "created_by_admin": false,
-//    "created_by_current_user": false,
-//    "upvote_count": 3,
-//    "user_has_upvoted": false
+   // "id": 1,
+   // "parent": null,
+   // "created": "2015-01-01",
+   // "modified": "2015-01-01",
+   // "content": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed posuere interdum sem. Quisque ligula eros ullamcorper quis, lacinia quis facilisis sed sapien. Mauris varius diam vitae arcu.",
+   // "pings": [],
+   // "creator": 6,
+   // "fullname": "Simon Powell",
+   // "profile_picture_url": "https://app.viima.com/static/media/user_profiles/user-icon.png",
+   // "created_by_admin": false,
+   // "created_by_current_user": false,
+   // "upvote_count": 3,
+   // "user_has_upvoted": false
 // },
 // {
 //    "id": 2,
@@ -50,19 +47,119 @@ var commentsArray = [];
 // }
 // ]
       $(function() {
+        var usersArray = [];
+        var commentsArray = [];
+        var userPost = $('#user-post').data('user-post');
+        //console.log(userPost);
+// <Roadrate post_id=1 user_id=1 vehicle_plate=HALLOWS event_date=02/28/2017 10:04 pm 
+// ptype=compliment location=95065 topic=Nice pace car skills!>
+        var allComments = $('#comments-all').data('comments-all');
+        //console.log(allComments);
+// [<Roadrate cid=1 comment_id=c1 user_id=1 post_id=1 parent= upvotes=0>, 
+// <Roadrate cid=2 comment_id=c2 user_id=1 post_id=1 parent= upvotes=0>]
+
+
+        var allCommentsLength = allComments.length;
+        //console.log(allCommentsLength);
+        for (var i = 0; i < allCommentsLength; i++) {
+          var comment = allComments[i];
+          //console.log(comment);
+          // for(var j = 0; j < comment.length; j++) {
+          //   //console.log("comment[" + i + "][" + j + "] = " + comment[j]);
+
+          //   var commentId = comment.comment_id;
+          //   var contentText = comment.content;
+          //   var dateCreated = comment.date_created;
+          //   var dateModified = comment.date_modified;
+          //   var parentId = comment.parent;
+          //   var upvoteCount = comment.upvote_count;
+
+          //   commentsArray[i] = {
+          //       'comment_id': commentId,
+          //       'parent': parentId,
+          //       'date_created': dateCreated,
+          //       'date_modified': dateModified,
+          //       'content': contentText,
+          //       'upvote_count': upvoteCount
+          //   };
+          //}
+        }
+
+        //console.log(commentsArray);
+
+          // commentsArray[i] =
+          // {
+          //  "id": comment[i].comment_id
+          //  "parent": null,
+          //  "created": comment[i].date_created,
+          //  "modified": comment[i].date_modified,
+          //  "content": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed posuere interdum sem. Quisque ligula eros ullamcorper quis, lacinia quis facilisis sed sapien. Mauris varius diam vitae arcu.",
+          //  "pings": [],
+          //  "creator": 6,
+          //  "fullname": "Simon Powell",
+          //  "profile_picture_url": "https://app.viima.com/static/media/user_profiles/user-icon.png",
+          //  "created_by_admin": false,
+          //  "created_by_current_user": false,
+          //  "upvote_count": 3,
+          //  "user_has_upvoted": false
+          // };
+
+
+        var post_id = $('#post-id').data('post');
+        var post_url = "/posts/detail/comments/" + post_id;
+
+        // Function to save a comment to the database
         var saveComment = function(data) {
 
           // Convert pings to human readable format
           $(data.pings).each(function(index, id) {
-            var user = usersArray.filter(function(user){return user.id == id})[0];
+            var user = usersArray.filter(function(user){return user.id == id;})[0];
             data.content = data.content.replace('@' + id, '@' + user.fullname);
           });
 
+          var commentId = data.comment_id;
+          var contentText = data.content;
+          var dateCreated = data.date_created;
+          var dateModified = data.date_modified;
+          var parentId = data.parent;
+          var upvoteCount = data.upvote_count;
+
+          var params = {
+              'comment_id': commentId,
+              'parent': parentId,
+              'date_created': dateCreated,
+              'date_modified': dateModified,
+              'content': contentText,
+              'upvote_count': upvoteCount
+          };
+
+          $.post(post_url, params, function(results){
+              console.log(results.status);
+          });
+
           return data;
-        }
+        };
+          // $.ajax({
+          //   type: 'POST',
+          //   url: post_url,
+          //   //dataType: 'json',
+          //   //contentType: "application/json; charset=utf-8",
+          //   contentType: "application/XML; charset=utf-8",
+          //   //data: JSON.stringify(commentJSON),
+          //   //data: data,
+          //   data: {
+          //     comment_id: data.comment_id,
+          //   },
+          //   // success: setTimeout(function () {
+          //   //   success(commentJSON); }, 500),
+          //   error: function(e) {
+          //     console.log(e);
+          //   },
+          // });
+
         $('#comments-container').comments({
-          profilePictureURL: 'https://viima-app.s3.amazonaws.com/media/user_profiles/user-icon.png',
-          currentUserId: 1,
+          //profilePictureURL: 'profile_picture_url',
+          currentUserId: '{{session[user_id]}}',
           enableUpvoting: false,
           enableReplying: true,
           roundProfilePictures: true,
@@ -70,25 +167,25 @@ var commentsArray = [];
           enableAttachments: false,
           enableHashtags: false,
           enablePinging: false,
-//     fieldMappings: {
-//         id: 'comment_id',
-//         parent: 'parent',
-//         created: 'date_created',
-//         modified: 'date_modified',
-//         content: 'content',
-//         // file: 'file',  disable option to upload attachments
-//         fileURL: 'file_url',
-//         // fileMimeType: 'file_mime_type',
-//         pings: 'pings',
-//         creator: 'user_id',
-//         fullname: 'username',
-//         profileURL: 'profile_url',
-//         // profilePictureURL: 'profile_picture_url',
-//         // createdByAdmin: 'created_by_admin',
-//         createdByCurrentUser: 'created_by_current_user',
-//         upvoteCount: 'upvote_count',
-//         userHasUpvoted: 'user_has_upvoted'
-//     }
+          fieldMappings: {
+              id: 'comment_id',
+              parent: 'parent',
+              created: 'date_created',
+              modified: 'date_modified',
+              content: 'content',
+              // file: 'file',  disable option to upload attachments
+              fileURL: 'file_url',
+              // fileMimeType: 'file_mime_type',
+              pings: 'pings',
+              creator: 'user_id',
+              fullname: 'username',
+              profileURL: 'profile_url',
+              profilePictureURL: 'profile_picture_url',
+              // createdByAdmin: 'created_by_admin',
+              createdByCurrentUser: 'created_by_current_user',
+              upvoteCount: 'upvote_count',
+              userHasUpvoted: 'user_has_upvoted'
+          },
           getUsers: function(success, error) {
             setTimeout(function() {
               success(usersArray);
@@ -104,14 +201,6 @@ var commentsArray = [];
               success(saveComment(data));
             }, 500);
           },
-          // https://github.com/Viima/jquery-comments/issues/2
-          // postComment: function (commentJSON, success, error) { $.ajax({ 
-          //   type: 'post', url: '', 
-          //   dataType: 'json', 
-          //   contentType: "application/json; charset=utf-8", 
-          //   data: JSON.stringify(commentJSON), 
-          //   success: setTimeout(function () { 
-          //   success(commentJSON); }, 500), error: error }); },
           putComment: function(data, success, error) {
             setTimeout(function() {
               success(saveComment(data));
@@ -134,4 +223,3 @@ var commentsArray = [];
           },
         });
       });
-    // </script>

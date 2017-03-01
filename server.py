@@ -2,7 +2,7 @@
 
 from passlib.hash import argon2
 from jinja2 import StrictUndefined
-from flask import Flask, render_template, request, flash, redirect, session
+from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from model import connect_to_db, db, User, Post, Vehicle, Comment
 # from sqlalchemy.sql import and_
@@ -283,15 +283,55 @@ def post_detail_comments(post_id):
         post_comments = Comment.query.filter_by(post_id=post_id).all()
         for comment in post_comments:
             comment.date_created = comment.date_created.strftime('%Y-%m-%d')
+            comment.date_modified = comment.date_modified.strftime('%Y-%m-%d')
             if (user_id == comment.user_id):
-                post_comments.created_by_current_user = True
+                comment.created_by_current_user = True
             else:
-                post_comments.created_by_current_user = False
+                comment.created_by_current_user = False
     else:
         flash("Please log in to access posts.")
         return redirect("/login")
 
+    # print user_post
+    # for comment in post_comments:
+    #     print comment
     return render_template("post_comments.html", user_post=user_post, post_comments=post_comments)
+
+
+@app.route("/posts/detail/comments/<int:post_id>", methods=['POST'])
+def post_detail_comments_form(post_id):
+    """Show details about a post and save comments."""
+
+    # Get variables
+    user_id = session.get("user_id")
+    if not user_id:
+        flash("Please log in to access posts.")
+        return redirect("/login")
+
+    comment_id = request.form["comment_id"]
+    parent = request.form["parent"]
+    date_created = request.form["date_created"]
+    # TODO: check if date_modified should be in another function or if loop
+    # date_modified = request.form["date_modified"]
+    content = request.form["content"]
+    upvotes = request.form["upvote_count"]
+
+    # TODO: iterate through form variables to eliminate blanks
+    # TODO: iterate through form variables to verify data formats
+
+    # comment = Comment(comment_id=comment_id, user_id=user_id, post_id=post_id, parent=parent,
+    #                   date_created=date_created, date_modified=date_modified, content=content,
+    #                   upvotes=upvote_count)
+    comment = Comment(comment_id=comment_id, user_id=user_id, post_id=post_id, parent=parent,
+                      date_created=date_created, content=content, upvotes=upvotes)
+    db.session.add(comment)
+    db.session.commit()
+    flash("Comment added.")
+
+    # return redirect("/posts/detail/%s" % post.post_id)
+
+    # return render_template("post_comments.html", user_post=user_post, post_comments=post_comments)
+    return jsonify({'status': 'success'})
 
 
 @app.route("/posts/add", methods=['GET'])
