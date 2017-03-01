@@ -5,6 +5,7 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from model import connect_to_db, db, User, Post, Vehicle, Comment
+import json
 # from sqlalchemy.sql import and_
 # from sqlalchemy import Date, cast
 # from datetime import date, datetime
@@ -282,19 +283,23 @@ def post_detail_comments(post_id):
         # get comments
         post_comments = Comment.query.filter_by(post_id=post_id).all()
         for comment in post_comments:
-            comment.date_created = comment.date_created.strftime('%Y-%m-%d')
-            comment.date_modified = comment.date_modified.strftime('%Y-%m-%d')
+            # comment.date_created = comment.date_created.strftime('%Y-%m-%d')
+            # comment.date_modified = comment.date_modified.strftime('%Y-%m-%d')
             if (user_id == comment.user_id):
                 comment.created_by_current_user = True
             else:
                 comment.created_by_current_user = False
+            # remove from beginnso can be converted to json
+            del comment._sa_instance_state
     else:
         flash("Please log in to access posts.")
         return redirect("/login")
 
-    # print user_post
-    # for comment in post_comments:
-    #     print comment
+    # convert to dictionary format
+    post_comments = [comment.__dict__ for comment in post_comments]
+    # convert to json format
+    post_comments = json.dumps(post_comments)
+
     return render_template("post_comments.html", user_post=user_post, post_comments=post_comments)
 
 

@@ -142,7 +142,7 @@ class Comment(db.Model):
     comment_id = db.Column(db.String(64), nullable=False)  # used by jquery-comments for position in thread
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.post_id'))
-    parent = db.Column(db.String(64), nullable=False)  # null means first comment in thread for jquery-comments
+    parent = db.Column(db.String(64))  # null means first comment in thread for jquery-comments
     date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
     date_modified = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
     # Either content or fileURL must be present for jquery_comments

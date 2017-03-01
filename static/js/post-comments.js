@@ -54,38 +54,38 @@
 // <Roadrate post_id=1 user_id=1 vehicle_plate=HALLOWS event_date=02/28/2017 10:04 pm 
 // ptype=compliment location=95065 topic=Nice pace car skills!>
         var allComments = $('#comments-all').data('comments-all');
-        //console.log(allComments);
+        console.log(allComments);
 // [<Roadrate cid=1 comment_id=c1 user_id=1 post_id=1 parent= upvotes=0>, 
 // <Roadrate cid=2 comment_id=c2 user_id=1 post_id=1 parent= upvotes=0>]
 
+        if (allComments) {
+          var allCommentsLength = allComments.length;
+          for (var i = 0; i < allCommentsLength; i++) {
+            var comment = allComments[i];
+            console.log(comment);
+            //for(var j = 0; j < comment.length; j++) {
+              //console.log("comment[" + i + "][" + j + "] = " + comment[j]);
 
-        var allCommentsLength = allComments.length;
-        //console.log(allCommentsLength);
-        for (var i = 0; i < allCommentsLength; i++) {
-          var comment = allComments[i];
-          //console.log(comment);
-          // for(var j = 0; j < comment.length; j++) {
-          //   //console.log("comment[" + i + "][" + j + "] = " + comment[j]);
+              var commentId = comment.comment_id;
+              var contentText = comment.content;
+              var dateCreated = comment.date_created;
+              var dateModified = comment.date_modified;
+              var parentId = comment.parent;
+              if (parentId === ""){parentId = null;}
+              var upvoteCount = comment.upvotes;
 
-          //   var commentId = comment.comment_id;
-          //   var contentText = comment.content;
-          //   var dateCreated = comment.date_created;
-          //   var dateModified = comment.date_modified;
-          //   var parentId = comment.parent;
-          //   var upvoteCount = comment.upvote_count;
-
-          //   commentsArray[i] = {
-          //       'comment_id': commentId,
-          //       'parent': parentId,
-          //       'date_created': dateCreated,
-          //       'date_modified': dateModified,
-          //       'content': contentText,
-          //       'upvote_count': upvoteCount
-          //   };
-          //}
+              commentsArray[i] = {
+                  'id': commentId,
+                  'parent': parentId,
+                  'created': dateCreated,
+                  'modified': dateModified,
+                  'content': contentText,
+                  'upvoteCount': upvoteCount
+              };
+            //}
+          }
         }
-
-        //console.log(commentsArray);
+        console.log(commentsArray);
 
           // commentsArray[i] =
           // {
