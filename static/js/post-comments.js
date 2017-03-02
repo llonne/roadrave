@@ -48,62 +48,8 @@
 // ]
       $(function() {
         var usersArray = [];
-        var commentsArray = [];
         var userPost = $('#user-post').data('user-post');
         //console.log(userPost);
-// <Roadrate post_id=1 user_id=1 vehicle_plate=HALLOWS event_date=02/28/2017 10:04 pm 
-// ptype=compliment location=95065 topic=Nice pace car skills!>
-        var allComments = $('#comments-all').data('comments-all');
-        console.log(allComments);
-// [<Roadrate cid=1 comment_id=c1 user_id=1 post_id=1 parent= upvotes=0>, 
-// <Roadrate cid=2 comment_id=c2 user_id=1 post_id=1 parent= upvotes=0>]
-
-        if (allComments) {
-          var allCommentsLength = allComments.length;
-          for (var i = 0; i < allCommentsLength; i++) {
-            var comment = allComments[i];
-            console.log(comment);
-            //for(var j = 0; j < comment.length; j++) {
-              //console.log("comment[" + i + "][" + j + "] = " + comment[j]);
-
-              var commentId = comment.comment_id;
-              var contentText = comment.content;
-              var dateCreated = comment.date_created;
-              var dateModified = comment.date_modified;
-              var parentId = comment.parent;
-              if (parentId === ""){parentId = null;}
-              var upvoteCount = comment.upvotes;
-
-              commentsArray[i] = {
-                  'id': commentId,
-                  'parent': parentId,
-                  'created': dateCreated,
-                  'modified': dateModified,
-                  'content': contentText,
-                  'upvoteCount': upvoteCount
-              };
-            //}
-          }
-        }
-        console.log(commentsArray);
-
-          // commentsArray[i] =
-          // {
-          //  "id": comment[i].comment_id
-          //  "parent": null,
-          //  "created": comment[i].date_created,
-          //  "modified": comment[i].date_modified,
-          //  "content": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed posuere interdum sem. Quisque ligula eros ullamcorper quis, lacinia quis facilisis sed sapien. Mauris varius diam vitae arcu.",
-          //  "pings": [],
-          //  "creator": 6,
-          //  "fullname": "Simon Powell",
-          //  "profile_picture_url": "https://app.viima.com/static/media/user_profiles/user-icon.png",
-          //  "created_by_admin": false,
-          //  "created_by_current_user": false,
-          //  "upvote_count": 3,
-          //  "user_has_upvoted": false
-          // };
-
 
         var post_id = $('#post-id').data('post');
         var post_url = "/posts/detail/comments/" + post_id;
@@ -192,10 +138,97 @@
             }, 500);
           },
           getComments: function(success, error) {
-            setTimeout(function() {
-              success(commentsArray);
-            }, 500);
+              //var commentsArray = [];
+              // var allComments = $('#comments-all').data('comments-all');
+              // console.log(allComments);
+              // if (allComments) {
+              //   commentsArray = allComments;
+
+                // var allCommentsLength = allComments.length;
+                // var comment = [];
+                // for (var i = 0; i < allCommentsLength; i++) {
+                //     comment = allComments[i];
+                //   //console.log(comment);
+                //   //for(var j = 0; j < comment.length; j++) {
+
+                //     var commentId = comment.comment_id;
+                //     var contentText = comment.content;
+                //     var dateCreated = comment.date_created;
+                //     var dateModified = comment.date_modified;
+                //     var parentId = comment.parent;
+                //     if (parentId === ""){parentId = null;}
+                //     var upvoteCount = comment.upvotes;
+
+                //     commentsArray[i] = {
+                //         'id': commentId,
+                //         'parent': parentId,
+                //         'created': dateCreated,
+                //         'modified': dateModified,
+                //         'content': contentText,
+                //         'upvoteCount': upvoteCount
+                //       };
+                  //}
+                //}
+              //}
+              //console.log(commentsArray);
+              //commentsArray = jsonify(commentsArray);
+              //console.log(commentsArray);
+              $.ajax({
+                  type: 'get',
+                  url: '/post_comments.json',
+                  data: {'post_id': post_id},
+                  success: function(commentsArray) {
+                    //console.log(commentsArray);
+                    var newArray = commentsArray.comments;
+                    
+                    newArray = JSON.parse(newArray);
+                    console.log(newArray);
+                    success(newArray);
+                  },
+                  error: error
+              });
           },
+          //getComments: function(success, error) {
+            // var commentsArray = [];
+            // var allComments = $('#comments-all').data('comments-all');
+            // //console.log(allComments);
+            // if (allComments) {
+            //   var allCommentsLength = allComments.length;
+            //   for (var i = 0; i < allCommentsLength; i++) {
+            //     var comment = allComments[i];
+            //     //console.log(comment);
+            //     //for(var j = 0; j < comment.length; j++) {
+
+            //       var commentId = comment.comment_id;
+            //       var contentText = comment.content;
+            //       var dateCreated = comment.date_created;
+            //       var dateModified = comment.date_modified;
+            //       var parentId = comment.parent;
+            //       if (parentId === ""){parentId = null;}
+            //       var upvoteCount = comment.upvotes;
+
+            //       commentsArray[i] = {
+            //           'id': commentId,
+            //           'parent': parentId,
+            //           'created': dateCreated,
+            //           'modified': dateModified,
+            //           'content': contentText,
+            //           'upvoteCount': upvoteCount
+            //       };
+            //     //}
+            //   }
+            // }
+            // console.log(commentsArray);
+          //   setTimeout(function() {
+          //     success(commentsArray);
+          //   }, 500);
+          // },
+
+          // getComments: function(success, error) {
+          //   setTimeout(function() {
+          //     success(commentsArray);
+          //   }, 500);
+          // },
           postComment: function(data, success, error) {
             setTimeout(function() {
               success(saveComment(data));

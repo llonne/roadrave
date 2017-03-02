@@ -265,6 +265,48 @@ def post_detail(post_id):
     return render_template("post.html", user_post=user_post)
 
 
+@app.route("/post_comments.json", methods=['GET'])
+def post_detail_comments_json():
+    """Show details about a post including comments."""
+
+# TODO: enable upvoting in jquery_comments and modify db model to handle userHasUpvoted data
+# set these vars for jquery_comments...
+
+    user_id = session.get("user_id")
+    post_id = int(request.args.get("post_id"))
+
+    if user_id:
+        # get post data
+        user_post = Post.query.filter_by(post_id=post_id).first()
+        user_post.event_date = user_post.event_date.strftime('%m/%d/%Y %I:%M %P')
+        user = User.query.filter_by(user_id=user_post.user_id).first()
+        user_post.username = user.username
+        # get comments
+        post_comments = Comment.query.filter_by(post_id=post_id).all()
+        for comment in post_comments:
+            # comment.date_created = comment.date_created.strftime('%Y-%m-%d')
+            comment.date_created = comment.date_created.strftime('%Y-%m-%dT%H:%M:%f+00:00')
+            # comment.date_modified = comment.date_modified.strftime('%Y-%m-%d')
+            comment.date_modified = comment.date_modified.strftime('%Y-%m-%dT%H:%M:%f+00:00')
+            if (user_id == comment.user_id):
+                comment.created_by_current_user = True
+            else:
+                comment.created_by_current_user = False
+            # remove from beginnso can be converted to json
+            del comment._sa_instance_state
+    else:
+        flash("Please log in to access posts.")
+        return redirect("/login")
+
+    # convert to dictionary format
+    post_comments = [comment.__dict__ for comment in post_comments]
+    # print post_comments
+    # convert to json format
+    post_comments = json.dumps(post_comments)
+    print post_comments
+    return jsonify({'comments': post_comments})
+
+
 @app.route("/posts/detail/comments/<int:post_id>", methods=['GET'])
 def post_detail_comments(post_id):
     """Show details about a post including comments."""
@@ -284,7 +326,9 @@ def post_detail_comments(post_id):
         post_comments = Comment.query.filter_by(post_id=post_id).all()
         for comment in post_comments:
             # comment.date_created = comment.date_created.strftime('%Y-%m-%d')
+            comment.date_created = comment.date_created.strftime('%Y-%m-%dT%H:%M:%f+00:00')
             # comment.date_modified = comment.date_modified.strftime('%Y-%m-%d')
+            comment.date_modified = comment.date_modified.strftime('%Y-%m-%dT%H:%M:%f+00:00')
             if (user_id == comment.user_id):
                 comment.created_by_current_user = True
             else:
@@ -297,9 +341,10 @@ def post_detail_comments(post_id):
 
     # convert to dictionary format
     post_comments = [comment.__dict__ for comment in post_comments]
+    # print post_comments
     # convert to json format
     post_comments = json.dumps(post_comments)
-
+    print post_comments
     return render_template("post_comments.html", user_post=user_post, post_comments=post_comments)
 
 
