@@ -145,7 +145,7 @@
                   success: function(commentsArray) {
                     var commentArray = commentsArray.comments;
                     commentArray = JSON.parse(commentArray);
-                    console.log(commentArray);
+                    //console.log(commentArray);
                     success(commentArray);
                   },
                   error: error

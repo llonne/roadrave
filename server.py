@@ -346,7 +346,7 @@ def post_detail_comments(post_id):
     # print post_comments
     # convert to json format
     post_comments = json.dumps(post_comments)
-    print post_comments
+    # print post_comments
     return render_template("post_comments.html", user_post=user_post, post_comments=post_comments)
 
 
