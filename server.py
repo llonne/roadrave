@@ -285,9 +285,11 @@ def post_detail_comments_json():
         post_comments = Comment.query.filter_by(post_id=post_id).all()
         for comment in post_comments:
             # comment.date_created = comment.date_created.strftime('%Y-%m-%d')
-            comment.date_created = comment.date_created.strftime('%Y-%m-%dT%H:%M:%f+00:00')
+            comment.date_created = comment.date_created.strftime('%Y, %m, %d %H:%M:%S')
+            # comment.date_created = comment.date_created.strftime('%Y-%m-%dT%H:%M:%f+00:00')
             # comment.date_modified = comment.date_modified.strftime('%Y-%m-%d')
-            comment.date_modified = comment.date_modified.strftime('%Y-%m-%dT%H:%M:%f+00:00')
+            comment.date_modified = comment.date_modified.strftime('%Y, %m, %d %H:%M:%S')
+            # comment.date_modified = comment.date_modified.strftime('%Y-%m-%dT%H:%M:%f+00:00')
             if (user_id == comment.user_id):
                 comment.created_by_current_user = True
             else:
@@ -300,10 +302,10 @@ def post_detail_comments_json():
 
     # convert to dictionary format
     post_comments = [comment.__dict__ for comment in post_comments]
-    # print post_comments
+
     # convert to json format
     post_comments = json.dumps(post_comments)
-    print post_comments
+
     return jsonify({'comments': post_comments})
 
 

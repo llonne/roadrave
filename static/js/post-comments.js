@@ -138,97 +138,19 @@
             }, 500);
           },
           getComments: function(success, error) {
-              //var commentsArray = [];
-              // var allComments = $('#comments-all').data('comments-all');
-              // console.log(allComments);
-              // if (allComments) {
-              //   commentsArray = allComments;
-
-                // var allCommentsLength = allComments.length;
-                // var comment = [];
-                // for (var i = 0; i < allCommentsLength; i++) {
-                //     comment = allComments[i];
-                //   //console.log(comment);
-                //   //for(var j = 0; j < comment.length; j++) {
-
-                //     var commentId = comment.comment_id;
-                //     var contentText = comment.content;
-                //     var dateCreated = comment.date_created;
-                //     var dateModified = comment.date_modified;
-                //     var parentId = comment.parent;
-                //     if (parentId === ""){parentId = null;}
-                //     var upvoteCount = comment.upvotes;
-
-                //     commentsArray[i] = {
-                //         'id': commentId,
-                //         'parent': parentId,
-                //         'created': dateCreated,
-                //         'modified': dateModified,
-                //         'content': contentText,
-                //         'upvoteCount': upvoteCount
-                //       };
-                  //}
-                //}
-              //}
-              //console.log(commentsArray);
-              //commentsArray = jsonify(commentsArray);
-              //console.log(commentsArray);
               $.ajax({
                   type: 'get',
                   url: '/post_comments.json',
                   data: {'post_id': post_id},
                   success: function(commentsArray) {
-                    //console.log(commentsArray);
-                    var newArray = commentsArray.comments;
-                    
-                    newArray = JSON.parse(newArray);
-                    console.log(newArray);
-                    success(newArray);
+                    var commentArray = commentsArray.comments;
+                    commentArray = JSON.parse(commentArray);
+                    console.log(commentArray);
+                    success(commentArray);
                   },
                   error: error
               });
           },
-          //getComments: function(success, error) {
-            // var commentsArray = [];
-            // var allComments = $('#comments-all').data('comments-all');
-            // //console.log(allComments);
-            // if (allComments) {
-            //   var allCommentsLength = allComments.length;
-            //   for (var i = 0; i < allCommentsLength; i++) {
-            //     var comment = allComments[i];
-            //     //console.log(comment);
-            //     //for(var j = 0; j < comment.length; j++) {
-
-            //       var commentId = comment.comment_id;
-            //       var contentText = comment.content;
-            //       var dateCreated = comment.date_created;
-            //       var dateModified = comment.date_modified;
-            //       var parentId = comment.parent;
-            //       if (parentId === ""){parentId = null;}
-            //       var upvoteCount = comment.upvotes;
-
-            //       commentsArray[i] = {
-            //           'id': commentId,
-            //           'parent': parentId,
-            //           'created': dateCreated,
-            //           'modified': dateModified,
-            //           'content': contentText,
-            //           'upvoteCount': upvoteCount
-            //       };
-            //     //}
-            //   }
-            // }
-            // console.log(commentsArray);
-          //   setTimeout(function() {
-          //     success(commentsArray);
-          //   }, 500);
-          // },
-
-          // getComments: function(success, error) {
-          //   setTimeout(function() {
-          //     success(commentsArray);
-          //   }, 500);
-          // },
           postComment: function(data, success, error) {
             setTimeout(function() {
               success(saveComment(data));
